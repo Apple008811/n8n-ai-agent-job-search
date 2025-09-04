@@ -1,0 +1,148 @@
+{
+  "name": "内容分析工作流",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "analyze",
+        "options": {}
+      },
+      "id": "webhook",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://ai-analysis-api:5000/analyze",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "content",
+              "value": "={{ $json.content }}"
+            },
+            {
+              "name": "content_type",
+              "value": "text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "http_request",
+      "name": "调用分析API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "sentiment_check",
+              "leftValue": "={{ $json.key_information.sentiment }}",
+              "rightValue": "positive",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if_sentiment",
+      "name": "情感判断",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"message\": \"正面内容\", \"analysis\": $json } }}",
+        "options": {}
+      },
+      "id": "positive_response",
+      "name": "正面响应",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [900, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"message\": \"非正面内容\", \"analysis\": $json } }}",
+        "options": {}
+      },
+      "id": "negative_response",
+      "name": "其他响应",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [900, 400]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "调用分析API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "调用分析API": {
+      "main": [
+        [
+          {
+            "node": "情感判断",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "情感判断": {
+      "main": [
+        [
+          {
+            "node": "正面响应",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "其他响应",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "1"
+} 
