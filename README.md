@@ -248,20 +248,118 @@ Automate academic and professional research workflows.
 - **Email Processing**: Gmail API
 - **Web Scraping**: HTTP Request nodes
 - **Data Processing**: JavaScript/Node.js
+- **API Service**: Flask (Python)
+- **Containerization**: Docker & Docker Compose
 
-## Setup Instructions
+## 📁 Project File Structure
 
-### Prerequisites
-- n8n instance (local or cloud)
-- Gmail API credentials
-- Notion API access
-- Cursor Pro subscription
+### 🔧 Core n8n Workflow Files
 
-### Installation
-1. Clone the repository
-2. Configure n8n workflows
-3. Set up API credentials
-4. Test data flow
+| 📄 File | 🎯 Purpose | 🔗 Usage in n8n |
+|---------|------------|-----------------|
+| `job_parser.js` | Main job parsing logic | **Code Parser node** - extracts job details from LinkedIn emails |
+| `time_converter.js` | Timestamp conversion utility | **Code (Time Converter) node** - converts Unix timestamps to readable format |
+| `debug_gmail_get.js` | Gmail debugging tool | **Debug node** - inspects Gmail (Get) node output structure |
+| `test_current_state.js` | State testing utility | **Test node** - validates current workflow state |
+| `gmail_parser.js` | Legacy email parser | **Backup parser** - early version of email parsing logic |
+
+### 🐍 API Service Files
+
+| 📄 File | 🎯 Purpose | 📝 Description |
+|---------|------------|----------------|
+| `app.py` | Flask API service | Python web service for content analysis and file processing |
+| `requirements.txt` | Python dependencies | Flask, PyPDF2, BeautifulSoup4, pandas, matplotlib, plotly |
+
+### 🐳 Deployment & Infrastructure
+
+| 📄 File | 🎯 Purpose | 📝 Description |
+|---------|------------|----------------|
+| `Dockerfile` | Container configuration | Builds Python API service container |
+| `docker-compose.yml` | Service orchestration | Orchestrates n8n and API service containers |
+| `workflows/simple_analysis.json` | n8n workflow template | Sample workflow for content analysis |
+
+### ⚙️ Configuration & Documentation
+
+| 📄 File | 🎯 Purpose | 📝 Description |
+|---------|------------|----------------|
+| `config_backup.md` | Configuration backup | Contains all API credentials and settings (⚠️ NOT in Git) |
+| `README.md` | Project documentation | Complete setup and usage guide |
+| `LICENSE` | MIT License | Open source license |
+
+### 🚀 Quick Usage Guide
+
+#### 📋 Code Nodes Configuration
+1. **Time Converter**: Copy `time_converter.js` content → Paste in Code node
+2. **Job Parser**: Copy `job_parser.js` content → Paste in Code Parser node  
+3. **Debug Tool**: Copy `debug_gmail_get.js` content → Paste in Debug node
+4. **Test Tool**: Copy `test_current_state.js` content → Paste in Test node
+
+#### 🔌 API Integration
+1. **Flask Service**: Deploy `app.py` for file processing and analysis
+2. **Docker Deployment**: Use `docker-compose.yml` for full stack deployment
+
+## 🚀 Setup Instructions
+
+### 📋 Prerequisites
+- ✅ Docker and Docker Compose
+- ✅ Gmail API credentials
+- ✅ Notion API access
+- ✅ Cursor Pro subscription
+
+### 🐳 Quick Start with Docker
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Apple008811/n8n-ai-agent-job-search.git
+   cd n8n-ai-agent-job-search
+   ```
+
+2. **Start services with Docker Compose**
+   ```bash
+   docker-compose up -d
+   ```
+
+3. **Access n8n interface**
+   - 🌐 Open http://localhost:5678
+   - ⚙️ Complete n8n setup wizard
+
+4. **Access API service**
+   - 🔌 API available at http://localhost:5002
+   - ❤️ Health check: http://localhost:5002/health
+
+### 🔧 Manual Setup (Alternative)
+
+1. **Install n8n locally**
+   ```bash
+   npm install n8n -g
+   n8n start
+   ```
+
+2. **Set up Python API service**
+   ```bash
+   pip install -r requirements.txt
+   python app.py
+   ```
+
+3. **Configure API credentials**
+   - 📧 Gmail OAuth2 credentials
+   - 📝 Notion integration token
+   - 💾 Update `config_backup.md` with your settings
+
+### ⚙️ n8n Workflow Configuration
+
+1. **Import workflow templates**
+   - 📄 Use `workflows/simple_analysis.json` as reference
+   - 🆕 Create new workflow for Job Search Agent
+
+2. **Configure Code nodes**
+   - 📋 Copy content from respective `.js` files
+   - 🔄 Set node modes (Run Once for All Items vs Each Item)
+
+3. **Set up API connections**
+   - 📧 Gmail API (OAuth2)
+   - 📝 Notion API (Token)
+   - 🌐 HTTP Request nodes for external APIs
 
 ## Usage
 
