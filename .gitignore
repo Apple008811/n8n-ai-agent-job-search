@@ -1,0 +1,29 @@
+# Configuration files with sensitive data
+config_backup.md
+.env
+*.env
+
+# n8n data
+n8n_data/
+workflows/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node modules (if any)
+node_modules/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
