@@ -483,13 +483,26 @@ Automate academic and professional research workflows.
 - Rate limiting to prevent abuse
 - Data privacy compliance
 
-## Future Enhancements
+## 📋 TODO List
 
-- Machine learning job matching
-- Automated application submission
-- Interview scheduling integration
-- Salary negotiation insights
-- Career progression tracking
+### 🚀 High Priority
+- [ ] **Rename GitHub repository** from `job-search` to `job-collection-platform` to better reflect project purpose
+- [ ] **Improve work type parsing** - Currently extracting "Unknown" for most jobs, need better detection logic
+- [ ] **Add job filtering system** - Filter jobs by keywords, location, salary range, company size
+- [ ] **Multi-platform job collection** - Add support for Indeed, AngelList, GitHub Jobs, Stack Overflow Jobs
+
+### 🔄 Medium Priority  
+- [ ] **Enhanced job matching** - AI-powered job recommendations based on skills and preferences
+- [ ] **Company research integration** - Auto-fetch company information from Glassdoor/Crunchbase
+- [ ] **Application tracking** - Track application status and follow-up reminders
+- [ ] **Resume customization** - AI-powered resume tailoring for specific job applications
+
+### 📈 Future Enhancements
+- [ ] **Machine learning job matching** - Learn from user preferences and application history
+- [ ] **Automated application submission** - One-click application for compatible job boards
+- [ ] **Interview scheduling integration** - Calendar integration for interview management
+- [ ] **Salary negotiation insights** - Market data and negotiation tips
+- [ ] **Career progression tracking** - Long-term career development analytics
 
 
 ## Contributing
