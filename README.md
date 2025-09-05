@@ -1,6 +1,10 @@
 # Job Search AI Agent
 
-A comprehensive AI-powered job search automation system built with n8n workflow automation platform.
+An intelligent job collection and automation platform that combines LLM reasoning with n8n workflow automation for seamless job discovery and data management.
+
+## ✨ Highlights
+
+This project uniquely combines **LLM reasoning capabilities** with **n8n workflow automation** to create a powerful job collection and intelligence platform. The LLM provides intelligent content parsing and job matching, while n8n ensures reliable automation and seamless data flow between Gmail, Notion, and external APIs. This synergistic approach delivers superior automation with AI-enhanced accuracy and scalable architecture for future enhancements.
 
 ## Project Overview
 
