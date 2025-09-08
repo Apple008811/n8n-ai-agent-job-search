@@ -8,3 +8,9 @@ pandas>=1.5.0
 openpyxl>=3.0.0
 matplotlib>=3.5.0
 plotly>=5.0.0
+
+# LLM + RAG Dependencies
+openai>=1.0.0
+sentence-transformers>=2.2.0
+numpy>=1.24.0
+sqlite3

@@ -31,6 +31,21 @@ services:
     depends_on:
       - n8n
 
+  llm-rag-service:
+    build: .
+    container_name: llm-rag-service
+    ports:
+      - "5001:5001"
+    environment:
+      - FLASK_ENV=development
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ./job_vectors.db:/app/job_vectors.db
+    networks:
+      - ai-network
+    depends_on:
+      - n8n
+
 volumes:
   n8n_persistent_data:
     driver: local

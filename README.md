@@ -6,6 +6,38 @@ An intelligent job collection and automation platform that combines LLM reasonin
 
 This project uniquely combines **LLM reasoning capabilities** with **n8n workflow automation** to create a powerful job collection and intelligence platform. The LLM provides intelligent content parsing and job matching, while n8n ensures reliable automation and seamless data flow between Gmail, Notion, and external APIs. This synergistic approach delivers superior automation with AI-enhanced accuracy and scalable architecture for future enhancements.
 
+## 🎛️ Vibe Coding Demo Prompts (Copy & Paste)
+
+### 1) Connect Cursor (AI Agent) to this repo
+- "Open the repository in Cursor and act as my Pair Programmer. Goal: build an LLM-powered job collection agent using n8n, Gmail API, and Notion. Keep code in English, minimal UI, and document steps in README."
+- "Scan the codebase and summarize the workflow from Gmail → Parser → Notion. Identify integration points for a chat/RAG layer."
+- "Generate a minimal Flask endpoint for `/chat` that accepts a question and returns a placeholder response. Add unit tests if trivial."
+
+### 2) n8n workflow bootstrapping
+- "Create an n8n workflow: Webhook (POST /chat) → HTTP Request to my Flask `/chat` → Respond to Webhook. Return JSON { response, relevant_jobs, timestamp }."
+- "Create a second webhook (POST /add-job) that forwards job JSON to my `/add_job` endpoint."
+- "Export the workflow as JSON and save it under `workflows/llm_rag_chat.json`."
+
+### 3) Gmail API integration prompts
+- "Guide me to create Gmail OAuth2 credentials. Output the exact steps and where to paste Client ID/Secret in n8n."
+- "In n8n, configure Gmail (Get Many) to filter: sender `jobalerts-noreply@linkedin.com`, search `newer_than:1d`, limit 20."
+- "Add a Code node using `time_converter.js`, then Loop → Gmail (Get) full message → Code `job_parser.js` → Notion. Ensure `emailTime` survives."
+
+### 4) Notion integration prompts
+- "Walk me through creating a Notion integration and database. Fields: Job Title (Title), Link (URL), Onsite/Remote/Hybrid (Select/Rich Text)."
+- "Map n8n Notion node properties exactly: Title = `={{ $json.jobTitle }}`, Link = `={{ $json.jobLink }}`, Work Type = `={{ $json.workType }}`."
+- "Test with 3 sample items and verify entries appear in Notion without property errors."
+
+### 5) LLM + RAG chat layer
+- "Add `OPENAI_API_KEY` to env. Start the `llm_rag_service.py` on port 5001."
+- "POST /add_job with a sample job. Then POST /chat with: 'Find remote data roles in SF Bay Area'. Confirm recommendations include the added job if relevant."
+- "Serve `chat_interface.html` locally and test a full chat round-trip via n8n webhook."
+
+### 6) Demo narrative (what to say)
+- "This agent blends LLM reasoning (context, matching, advice) with n8n reliability (scheduling, retries, integrations)."
+- "Emails are parsed → standardized → deduped → pushed to Notion. The RAG layer adds semantic search and chat over collected jobs."
+- "Design favors modularity: replace sources (LinkedIn/Indeed), swap vector store, or extend prompts without breaking the pipeline."
+
 ## Project Overview
 
 This project consists of three main AI agents designed to streamline job search and career development:
