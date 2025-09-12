@@ -15,6 +15,7 @@ An intelligent job collection and automation platform that combines LLM reasonin
 - [📋 Standard Operating Procedure](#-standard-operating-procedure)
 - [🔧 Configuration](#-configuration)
 - [📊 Performance & Monitoring](#-performance--monitoring)
+- [📋 Development Roadmap](#-development-roadmap)
 - [🤝 Contributing](#-contributing)
 - [📄 License](#-license)
 
@@ -24,16 +25,25 @@ This project uniquely combines **LLM reasoning capabilities** with **n8n workflo
 
 ### Key Features
 
-- **🤖 Multi-Agent Architecture**: Job Search, Resume Parser, and Research agents
-- **📧 Gmail Integration**: Automated LinkedIn job alert processing
+**✅ Implemented**:
+- **🤖 Job Collection Agent**: Fully operational LinkedIn job extraction from Gmail
+- **📧 Gmail Integration**: Automated LinkedIn job alert processing (87 jobs processed)
 - **🌐 Universal Job Parsing**: Support for Greenhouse, Stripe, and custom job boards
 - **📝 Notion Integration**: Unified job database with intelligent deduplication
 - **🔄 n8n Automation**: Reliable workflow orchestration and scheduling
-- **🧠 AI-Powered**: LLM reasoning for content analysis and job matching
+
+**🔄 In Development**:
+- **🧠 LLM Reasoning**: AI-powered content analysis and job matching (Phase 2)
+- **💬 Chat Interface**: Interactive job search assistant with RAG capabilities
+- **📄 Resume Parser**: AI-powered resume customization and analysis
+
+**📋 Planned**:
+- **🔍 Research Agent**: Academic and professional research automation
+- **🏢 Company Intelligence**: Auto-fetch company information and insights
 
 ## 🎛️ Quick Start
 
-### Demo Prompts (Copy & Paste)
+### Demo Prompts
 
 #### 1) Connect Cursor (AI Agent) to this repo
 - "Open the repository in Cursor and act as my Pair Programmer. Goal: build an LLM-powered job collection agent using n8n, Gmail API, and Notion. Keep code in English, minimal UI, and document steps in README."
@@ -92,42 +102,51 @@ This project uniquely combines **LLM reasoning capabilities** with **n8n workflo
 
 ## 🤖 AI Agents
 
-### 1. Job Search Agent ✅ **COMPLETED**
+### Phase 1: Job Collection Automation ✅ **IMPLEMENTED**
 
 **Purpose**: Automatically collect job postings from multiple sources and store them in a unified Notion database.
 
+**Implemented Features**:
+- ✅ **Gmail Integration**: Successfully configured and tested
+- ✅ **LinkedIn Job Alerts**: Automated extraction from Gmail (87 job entries processed)
+- ✅ **Notion Integration**: Database connection and property mapping completed
+- ✅ **End-to-End Workflow**: Complete automation pipeline operational
+- ✅ **Greenhouse Parser**: Universal parser with smart deduplication
+- ✅ **Custom Job Boards**: Stripe and other company-specific parsers
+- ✅ **Deduplication**: Intelligent conflict resolution with existing jobs
+
 **Data Sources**:
-- **Gmail (LinkedIn Job Alerts)**: Primary source for job notifications
-- **Greenhouse**: Universal job board parser
-- **Custom Job Boards**: Stripe and other company-specific pages
-- **Manual Input**: User-added job opportunities
+- **Gmail (LinkedIn Job Alerts)**: Primary source for job notifications ✅
+- **Greenhouse**: Universal job board parser ✅
+- **Custom Job Boards**: Stripe and other company-specific pages ✅
+- **Manual Input**: User-added job opportunities ✅
 
-**Current Status**:
-- ✅ Gmail Integration: Successfully configured and tested
-- ✅ Email Processing: 87 job entries extracted from LinkedIn alerts
-- ✅ Notion Integration: Database connection and property mapping completed
-- ✅ Data Flow: End-to-end workflow operational
-- ✅ Greenhouse Parser: Universal parser with smart deduplication
+### Phase 2: LLM Reasoning & Intelligence 🔄 **IN DEVELOPMENT**
 
-### 2. Resume Parser Agent 🔄 **IN DEVELOPMENT**
+**Purpose**: Add AI-powered reasoning, analysis, and intelligent job matching capabilities.
 
-**Purpose**: Customize resumes based on specific job descriptions using AI analysis.
+**Planned Features**:
+- 🔄 **LLM Reasoning**: AI analysis of job requirements and candidate matching
+- 🔄 **Intelligent Job Recommendations**: AI-powered job suggestions based on skills
+- 🔄 **Resume Customization**: AI analysis and resume tailoring for specific jobs
+- 🔄 **Chat Interface**: Interactive job search assistant with RAG capabilities
+- 🔄 **Skills Matching**: Automatic skills extraction and job matching
 
-**Features**:
-- PDF/Word resume upload
-- Job description analysis
-- AI-powered customization suggestions
-- Optimized resume generation
+**Current Status**: LLM reasoning layer is under development but not yet implemented.
 
-### 3. Research Agent 📋 **PENDING**
+### Phase 3: Advanced Features 📋 **PLANNED**
 
-**Purpose**: Automate academic and professional research workflows.
+**Purpose**: Advanced career development and research automation.
 
-**Capabilities**:
-- Paper collection and analysis
-- Data processing and simulation
-- Results analysis and policy recommendations
-- Multi-source data integration
+**Planned Capabilities**:
+- 📋 **Research Agent**: Academic and professional research automation
+- 📋 **Company Intelligence**: Auto-fetch company information and insights
+- 📋 **Application Tracking**: Track application status and follow-up reminders
+- 📋 **Salary Analysis**: Market data and compensation insights
+
+### Cancelled Features ❌ **NOT IMPLEMENTING**
+
+**Events Integration**: Originally planned to integrate tech events and conferences, but due to API limitations and membership requirements, this feature has been cancelled for now.
 
 ## 🔧 Technical Stack
 
@@ -625,6 +644,38 @@ For individual users, the time investment is minimal and practical:
 - Secure credential storage
 - Rate limiting to prevent abuse
 - Data privacy compliance
+
+## 📋 Development Roadmap
+
+### Phase 2: LLM Reasoning & Intelligence 🔄 **CURRENT FOCUS**
+- [ ] **LLM Reasoning Engine** - Implement AI-powered job analysis and candidate matching
+- [ ] **Chat Interface** - Interactive job search assistant with RAG capabilities
+- [ ] **Resume Parser** - AI-powered resume customization and analysis
+- [ ] **Skills Matching** - Automatic skills extraction and job matching
+- [ ] **Job Recommendations** - AI-powered job suggestions based on profile
+
+### Phase 3: Advanced Features 📋 **PLANNED**
+- [ ] **Research Agent** - Academic and professional research automation
+- [ ] **Company Intelligence** - Auto-fetch company information from Glassdoor/Crunchbase
+- [ ] **Application Tracking** - Track application status and follow-up reminders
+- [ ] **Salary Analysis** - Market data and compensation insights
+- [ ] **Career Progression** - Long-term career development analytics
+
+### Phase 4: Platform Expansion 🚀 **FUTURE**
+- [ ] **Multi-platform Support** - Add Indeed, AngelList, GitHub Jobs, Stack Overflow Jobs
+- [ ] **Advanced Filtering** - Filter jobs by keywords, location, salary range, company size
+- [ ] **Machine Learning** - Learn from user preferences and application history
+- [ ] **Automated Applications** - One-click application for compatible job boards
+- [ ] **Interview Integration** - Calendar integration for interview management
+
+### Improvements & Maintenance 🔧 **ONGOING**
+- [ ] **Work Type Parsing** - Improve detection logic (currently extracting "Unknown")
+- [ ] **Repository Rename** - Consider renaming from `job-search` to `job-collection-platform`
+- [ ] **Performance Optimization** - Enhance parsing speed and accuracy
+- [ ] **Error Handling** - Improve robustness and error recovery
+
+### Cancelled Features ❌ **NOT IMPLEMENTING**
+- **Events Integration** - Originally planned to integrate tech events and conferences, but due to API limitations and membership requirements, this feature has been cancelled for now
 
 ## 🤝 Contributing
 
