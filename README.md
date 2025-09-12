@@ -32,9 +32,6 @@
                        └─────────────────┘
 ```
 
-
-
-
 ### Progresses
 
 **✅ Phase 1, Implemented**:
@@ -49,10 +46,6 @@
 - **📄 Resume Parser**: AI-powered resume customization and analysis
 
 
-
-
-# Appendix 
-
 ## 🔧 Technical Stack
 
 - **Workflow Engine**: n8n
@@ -65,8 +58,62 @@
 - **Containerization**: Docker & Docker Compose
 
 
+### Core Principles
 
-## 🎛️ Process
+- **Modular Design**: Each agent is independent and can be maintained separately
+- **Unified Data Format**: All data sources output the same structure
+- **Configuration-Driven**: Easy to add new data sources through configuration
+- **Backward Compatible**: New features don't affect existing functionality
+
+
+## 📁 Project Structure
+
+### 🔧 Core n8n Workflow Files
+
+| 📄 File | 🎯 Purpose | 🔗 Usage in n8n |
+|---------|------------|-----------------|
+| `job_parser.js` | Main job parsing logic | **Code Parser node** - extracts job details from LinkedIn emails |
+| `time_converter.js` | Timestamp conversion utility | **Code (Time Converter) node** - converts Unix timestamps to readable format |
+| `debug_gmail_get.js` | Gmail debugging tool | **Debug node** - inspects Gmail (Get) node output structure |
+| `test_current_state.js` | State testing utility | **Test node** - validates current workflow state |
+| `gmail_parser.js` | Legacy email parser | **Backup parser** - early version of email parsing logic |
+
+### 🎯 Job Parser Files
+
+| 📄 File | 🎯 Purpose | 🔗 Usage in n8n |
+|---------|------------|-----------------|
+| `greenhouse_optimized.js` | Greenhouse job parser | **Code Parser node** - extracts jobs from Greenhouse job boards |
+| `notion_job_mapper.js` | Notion integration | **Code node** - maps job data to Notion database schema |
+| `universal_job_parser.js` | Universal parser | **Code node** - handles multiple job board formats |
+| `stripe_parser.js` | Stripe job parser | **Code node** - extracts jobs from Stripe custom job board |
+| `test_greenhouse_optimized.js` | Test suite | **Test node** - validates Greenhouse parser functionality |
+
+### 🐍 API Service Files
+
+| 📄 File | 🎯 Purpose | 📝 Description |
+|---------|------------|----------------|
+| `app.py` | Flask API service | Python web service for content analysis and file processing |
+| `llm_rag_service.py` | LLM RAG service | AI-powered chat and analysis service |
+| `requirements.txt` | Python dependencies | Flask, PyPDF2, BeautifulSoup4, pandas, matplotlib, plotly |
+
+### 🐳 Deployment & Infrastructure
+
+| 📄 File | 🎯 Purpose | 📝 Description |
+|---------|------------|----------------|
+| `Dockerfile` | Container configuration | Builds Python API service container |
+| `docker-compose.yml` | Service orchestration | Orchestrates n8n and API service containers |
+| `workflows/` | n8n workflow templates | Sample workflows for different use cases |
+
+### ⚙️ Configuration & Documentation
+
+| 📄 File | 🎯 Purpose | 📝 Description |
+|---------|------------|----------------|
+| `config_backup.md` | Configuration backup | Contains all API credentials and settings (⚠️ **NOT in Git**) |
+| `README.md` | Project documentation | Complete setup and usage guide |
+| `LICENSE` | MIT License | Open source license |
+
+
+## 🎛️ Build up in Cursor
 
 ### Prompts
 
@@ -95,15 +142,6 @@
 - "POST /add_job with a sample job. Then POST /chat with: 'Find remote data roles in SF Bay Area'. Confirm recommendations include the added job if relevant."
 - "Serve `chat_interface.html` locally and test a full chat round-trip via n8n webhook."
 
-
-## 🏗️ Architecture
-
-### Core Principles
-
-- **Modular Design**: Each agent is independent and can be maintained separately
-- **Unified Data Format**: All data sources output the same structure
-- **Configuration-Driven**: Easy to add new data sources through configuration
-- **Backward Compatible**: New features don't affect existing functionality
 
 
 
@@ -159,51 +197,6 @@
 **Events Integration**: Originally planned to integrate tech events and conferences, but due to API limitations and membership requirements, this feature has been cancelled for now.
 
 
-## 📁 Project Structure
-
-### 🔧 Core n8n Workflow Files
-
-| 📄 File | 🎯 Purpose | 🔗 Usage in n8n |
-|---------|------------|-----------------|
-| `job_parser.js` | Main job parsing logic | **Code Parser node** - extracts job details from LinkedIn emails |
-| `time_converter.js` | Timestamp conversion utility | **Code (Time Converter) node** - converts Unix timestamps to readable format |
-| `debug_gmail_get.js` | Gmail debugging tool | **Debug node** - inspects Gmail (Get) node output structure |
-| `test_current_state.js` | State testing utility | **Test node** - validates current workflow state |
-| `gmail_parser.js` | Legacy email parser | **Backup parser** - early version of email parsing logic |
-
-### 🎯 Job Parser Files
-
-| 📄 File | 🎯 Purpose | 🔗 Usage in n8n |
-|---------|------------|-----------------|
-| `greenhouse_optimized.js` | Greenhouse job parser | **Code Parser node** - extracts jobs from Greenhouse job boards |
-| `notion_job_mapper.js` | Notion integration | **Code node** - maps job data to Notion database schema |
-| `universal_job_parser.js` | Universal parser | **Code node** - handles multiple job board formats |
-| `stripe_parser.js` | Stripe job parser | **Code node** - extracts jobs from Stripe custom job board |
-| `test_greenhouse_optimized.js` | Test suite | **Test node** - validates Greenhouse parser functionality |
-
-### 🐍 API Service Files
-
-| 📄 File | 🎯 Purpose | 📝 Description |
-|---------|------------|----------------|
-| `app.py` | Flask API service | Python web service for content analysis and file processing |
-| `llm_rag_service.py` | LLM RAG service | AI-powered chat and analysis service |
-| `requirements.txt` | Python dependencies | Flask, PyPDF2, BeautifulSoup4, pandas, matplotlib, plotly |
-
-### 🐳 Deployment & Infrastructure
-
-| 📄 File | 🎯 Purpose | 📝 Description |
-|---------|------------|----------------|
-| `Dockerfile` | Container configuration | Builds Python API service container |
-| `docker-compose.yml` | Service orchestration | Orchestrates n8n and API service containers |
-| `workflows/` | n8n workflow templates | Sample workflows for different use cases |
-
-### ⚙️ Configuration & Documentation
-
-| 📄 File | 🎯 Purpose | 📝 Description |
-|---------|------------|----------------|
-| `config_backup.md` | Configuration backup | Contains all API credentials and settings (⚠️ **NOT in Git**) |
-| `README.md` | Project documentation | Complete setup and usage guide |
-| `LICENSE` | MIT License | Open source license |
 
 ## 🚀 Setup Instructions
 
