@@ -66,6 +66,141 @@
 - **Backward Compatible**: New features don't affect existing functionality
 
 
+
+## 🔧 Configuration
+
+### Gmail Integration
+
+#### Workflow Node Configuration
+
+| Node | Purpose | Configuration | Key Details |
+|------|---------|---------------|-------------|
+| **Schedule Trigger (Morning)** | Daily morning execution | • Cron: "0 10 * * *" (10:00 AM)<br>• Timezone: Local<br>• Active: True | • Triggers Gmail collection<br>• Captures overnight job alerts<br>• First daily execution |
+| **Schedule Trigger (Evening)** | Daily evening execution | • Cron: "0 20 * * *" (8:00 PM)<br>• Timezone: Local<br>• Active: True | • Triggers Gmail collection<br>• Captures afternoon job alerts<br>• Second daily execution |
+| **Gmail (Get Many)** | Retrieve email list | • Resource: Message<br>• Operation: Get Many<br>• Limit: 20<br>• Search: "newer_than:1d"<br>• Sender: "jobalerts-noreply@linkedin.com" | • AND relationship for filters<br>• Daily latest emails only<br>• Strict LinkedIn filtering<br>• Output: Email metadata array |
+| **Code (Time Converter)** | Convert timestamps | • Mode: Run Once for All Items<br>• Language: JavaScript<br>• Input: Email array with Unix timestamps | • **Critical for deduplication**: internalDate as unique identifier<br>• **Essential for testing**: Human-readable time format<br>• **Dual format**: Preserves original + adds readable format<br>• **Timezone handling**: Converts to America/New_York |
+| **Loop** | Iterate through emails | • Input: Email array from Time Converter<br>• Mode: Run Once for Each Item<br>• Batch Size: 1 | • **Required for individual processing**: Gmail (Get) needs single email ID<br>• **Enables full content retrieval**: Each email processed separately<br>• **Prevents API overload**: Sequential processing vs batch |
+| **Gmail (Get)** | Get full email content | • Resource: Message<br>• Operation: Get<br>• Message ID: From Loop<br>• Format: Full | • Retrieves complete HTML content<br>• Required for job parsing<br>• 1 API call per email<br>• **Important**: Does not preserve upstream fields like `readableDate` |
+| **Code Parser** | Parse job information | • Language: JavaScript<br>• Input: Full email HTML<br>• Output: Structured job data | • Extracts job titles, companies, links<br>• Handles multiple jobs per email<br>• **Deduplication logic** |
+| **Notion** | Store job data | • Database: Job Search Table<br>• Operation: Create<br>• Fields: Auto-mapped<br>• **Duplicate Check**: Job Title + Company | • Unified job storage<br>• Extensible table structure<br>• **Automatic deduplication** |
+
+### Notion Integration
+
+#### Database Schema
+
+| Field | Type | Description | Auto/Manual |
+|-------|------|-------------|-------------|
+| Job Title | Title | Position name | Auto |
+| Link | URL | Application link | Auto |
+| Onsite/Remote/Hybrid | Select | Work type | Auto |
+| Apply Date | Date | Application date | Manual |
+| Status | Select | Application status | Manual |
+| Re-apply | Checkbox | Re-application flag | Manual |
+
+#### Critical Setup Steps
+
+1. **Create Notion Integration**
+   - Go to https://www.notion.so/my-integrations
+   - Create new integration: "n8n Job Search AI Agent"
+   - Select workspace: "Yixuan Jing's Notion HQ" (not Private)
+   - Copy Internal Integration Secret
+
+2. **Database Creation**
+   - Create database in Notion with 6 fields as shown above
+   - Convert simple table to database (not just a table)
+   - Get database ID from URL: `https://notion.so/database-id`
+
+3. **Access Permissions**
+   - In integration settings, go to "Access" tab
+   - Add database to "Manually selected" permissions
+   - Ensure integration has access to the database
+
+### Greenhouse Job Parser
+
+#### Supported Job Board Types
+
+The parser automatically detects and handles different job board formats:
+
+- **Standard Greenhouse**: `boards.greenhouse.io/company`
+- **Custom Greenhouse**: Company-specific implementations
+- **LinkedIn Jobs**: For deduplication purposes
+- **Generic Fallback**: For unknown formats
+
+#### Database Schema Mapping
+
+| Greenhouse Field | Notion Field | Type | Description |
+|------------------|--------------|------|-------------|
+| `title` | Job Title | Title | Job position title |
+| `url` | Link | URL | Complete application URL |
+| `location` | Onsite/Remote/Hybrid | Text | Work location |
+| `company` | - | - | Company name (used for deduplication) |
+| `department` | - | - | Department (used for filtering) |
+| `type` | - | - | Employment type (used for filtering) |
+
+
+
+## 📊 Performance & Monitoring
+
+### API Rate Limits
+
+#### Gmail API Quota Details
+
+| Quota Type | Limit | Our Usage | Status |
+|------------|-------|-----------|---------|
+| **Daily Requests** | 1,000,000 requests/day | ~50 requests/day | ✅ 0.005% of limit |
+| **Rate Limit** | 100 requests/second | ~1 request/second | ✅ Well within limit |
+| **Monthly Usage** | ~30,000,000 requests | ~2,500 requests | ✅ 0.008% of limit |
+| **Annual Usage** | ~365,000,000 requests | ~30,000 requests | ✅ 0.008% of limit |
+
+#### Current Workflow Usage
+
+| Operation | Frequency | Daily Calls | Monthly Calls |
+|-----------|-----------|-------------|---------------|
+| Schedule Triggers | 2 times/day (10:00 AM, 8:00 PM) | 2 triggers | 60 triggers |
+| Gmail (Get Many) | 2 times/day | 2 calls | 60 calls |
+| Loop (20 emails) | 2 times/day | 40 calls | 1,200 calls |
+| Gmail (Get) | 2 times/day | 40 calls | 1,200 calls |
+| **Total** | - | **82 calls** | **2,460 calls** |
+
+### Deduplication Strategy
+
+| Method | Criteria | Implementation | Benefits |
+|--------|----------|----------------|----------|
+| **Primary Key** | Job Title + Company | Notion database unique constraint | • Prevents exact duplicates<br>• Handles LinkedIn re-sends<br>• Database-level protection |
+| **Content Hash** | Email content hash | Code Parser JavaScript logic | • Detects similar job postings<br>• Handles minor variations<br>• Application-level filtering |
+| **Time Window** | 24-hour overlap | Gmail search "newer_than:1d" | • Natural deduplication<br>• Prevents old job re-processing<br>• Efficient API usage |
+
+### Personal Usage Time Investment
+
+For individual users, the time investment is minimal and practical:
+
+- **New Parser Development**: 1-2 hours
+  - Quick analysis of job board structure
+  - Copy and modify existing parser template
+  - Test and validate functionality
+  - Deploy to n8n workflow
+
+- **Regular Maintenance**: 30 minutes per month
+  - Check if all parsers are working correctly
+  - Verify data quality in Notion database
+  - Clean up any duplicate entries
+  - Update documentation if needed
+
+- **Issue Resolution**: On-demand basis
+  - Fix parsing issues when they occur
+  - Update selectors when websites change
+  - Troubleshoot n8n workflow problems
+  - No complex monitoring or alerting needed
+
+### Security Considerations
+
+- OAuth2 authentication for Gmail
+- Secure credential storage
+- Rate limiting to prevent abuse
+- Data privacy compliance
+
+
+
 ## 📁 Project Structure
 
 ### 🔧 Core n8n Workflow Files
@@ -508,135 +643,6 @@ Provide practical examples:
 - **Deduplication**: Always check for duplicates
 - **Security**: Follow security best practices
 
-## 🔧 Configuration
-
-### Gmail Integration
-
-#### Workflow Node Configuration
-
-| Node | Purpose | Configuration | Key Details |
-|------|---------|---------------|-------------|
-| **Schedule Trigger (Morning)** | Daily morning execution | • Cron: "0 10 * * *" (10:00 AM)<br>• Timezone: Local<br>• Active: True | • Triggers Gmail collection<br>• Captures overnight job alerts<br>• First daily execution |
-| **Schedule Trigger (Evening)** | Daily evening execution | • Cron: "0 20 * * *" (8:00 PM)<br>• Timezone: Local<br>• Active: True | • Triggers Gmail collection<br>• Captures afternoon job alerts<br>• Second daily execution |
-| **Gmail (Get Many)** | Retrieve email list | • Resource: Message<br>• Operation: Get Many<br>• Limit: 20<br>• Search: "newer_than:1d"<br>• Sender: "jobalerts-noreply@linkedin.com" | • AND relationship for filters<br>• Daily latest emails only<br>• Strict LinkedIn filtering<br>• Output: Email metadata array |
-| **Code (Time Converter)** | Convert timestamps | • Mode: Run Once for All Items<br>• Language: JavaScript<br>• Input: Email array with Unix timestamps | • **Critical for deduplication**: internalDate as unique identifier<br>• **Essential for testing**: Human-readable time format<br>• **Dual format**: Preserves original + adds readable format<br>• **Timezone handling**: Converts to America/New_York |
-| **Loop** | Iterate through emails | • Input: Email array from Time Converter<br>• Mode: Run Once for Each Item<br>• Batch Size: 1 | • **Required for individual processing**: Gmail (Get) needs single email ID<br>• **Enables full content retrieval**: Each email processed separately<br>• **Prevents API overload**: Sequential processing vs batch |
-| **Gmail (Get)** | Get full email content | • Resource: Message<br>• Operation: Get<br>• Message ID: From Loop<br>• Format: Full | • Retrieves complete HTML content<br>• Required for job parsing<br>• 1 API call per email<br>• **Important**: Does not preserve upstream fields like `readableDate` |
-| **Code Parser** | Parse job information | • Language: JavaScript<br>• Input: Full email HTML<br>• Output: Structured job data | • Extracts job titles, companies, links<br>• Handles multiple jobs per email<br>• **Deduplication logic** |
-| **Notion** | Store job data | • Database: Job Search Table<br>• Operation: Create<br>• Fields: Auto-mapped<br>• **Duplicate Check**: Job Title + Company | • Unified job storage<br>• Extensible table structure<br>• **Automatic deduplication** |
-
-### Notion Integration
-
-#### Database Schema
-
-| Field | Type | Description | Auto/Manual |
-|-------|------|-------------|-------------|
-| Job Title | Title | Position name | Auto |
-| Link | URL | Application link | Auto |
-| Onsite/Remote/Hybrid | Select | Work type | Auto |
-| Apply Date | Date | Application date | Manual |
-| Status | Select | Application status | Manual |
-| Re-apply | Checkbox | Re-application flag | Manual |
-
-#### Critical Setup Steps
-
-1. **Create Notion Integration**
-   - Go to https://www.notion.so/my-integrations
-   - Create new integration: "n8n Job Search AI Agent"
-   - Select workspace: "Yixuan Jing's Notion HQ" (not Private)
-   - Copy Internal Integration Secret
-
-2. **Database Creation**
-   - Create database in Notion with 6 fields as shown above
-   - Convert simple table to database (not just a table)
-   - Get database ID from URL: `https://notion.so/database-id`
-
-3. **Access Permissions**
-   - In integration settings, go to "Access" tab
-   - Add database to "Manually selected" permissions
-   - Ensure integration has access to the database
-
-### Greenhouse Job Parser
-
-#### Supported Job Board Types
-
-The parser automatically detects and handles different job board formats:
-
-- **Standard Greenhouse**: `boards.greenhouse.io/company`
-- **Custom Greenhouse**: Company-specific implementations
-- **LinkedIn Jobs**: For deduplication purposes
-- **Generic Fallback**: For unknown formats
-
-#### Database Schema Mapping
-
-| Greenhouse Field | Notion Field | Type | Description |
-|------------------|--------------|------|-------------|
-| `title` | Job Title | Title | Job position title |
-| `url` | Link | URL | Complete application URL |
-| `location` | Onsite/Remote/Hybrid | Text | Work location |
-| `company` | - | - | Company name (used for deduplication) |
-| `department` | - | - | Department (used for filtering) |
-| `type` | - | - | Employment type (used for filtering) |
-
-## 📊 Performance & Monitoring
-
-### API Rate Limits
-
-#### Gmail API Quota Details
-
-| Quota Type | Limit | Our Usage | Status |
-|------------|-------|-----------|---------|
-| **Daily Requests** | 1,000,000 requests/day | ~50 requests/day | ✅ 0.005% of limit |
-| **Rate Limit** | 100 requests/second | ~1 request/second | ✅ Well within limit |
-| **Monthly Usage** | ~30,000,000 requests | ~2,500 requests | ✅ 0.008% of limit |
-| **Annual Usage** | ~365,000,000 requests | ~30,000 requests | ✅ 0.008% of limit |
-
-#### Current Workflow Usage
-
-| Operation | Frequency | Daily Calls | Monthly Calls |
-|-----------|-----------|-------------|---------------|
-| Schedule Triggers | 2 times/day (10:00 AM, 8:00 PM) | 2 triggers | 60 triggers |
-| Gmail (Get Many) | 2 times/day | 2 calls | 60 calls |
-| Loop (20 emails) | 2 times/day | 40 calls | 1,200 calls |
-| Gmail (Get) | 2 times/day | 40 calls | 1,200 calls |
-| **Total** | - | **82 calls** | **2,460 calls** |
-
-### Deduplication Strategy
-
-| Method | Criteria | Implementation | Benefits |
-|--------|----------|----------------|----------|
-| **Primary Key** | Job Title + Company | Notion database unique constraint | • Prevents exact duplicates<br>• Handles LinkedIn re-sends<br>• Database-level protection |
-| **Content Hash** | Email content hash | Code Parser JavaScript logic | • Detects similar job postings<br>• Handles minor variations<br>• Application-level filtering |
-| **Time Window** | 24-hour overlap | Gmail search "newer_than:1d" | • Natural deduplication<br>• Prevents old job re-processing<br>• Efficient API usage |
-
-### Personal Usage Time Investment
-
-For individual users, the time investment is minimal and practical:
-
-- **New Parser Development**: 1-2 hours
-  - Quick analysis of job board structure
-  - Copy and modify existing parser template
-  - Test and validate functionality
-  - Deploy to n8n workflow
-
-- **Regular Maintenance**: 30 minutes per month
-  - Check if all parsers are working correctly
-  - Verify data quality in Notion database
-  - Clean up any duplicate entries
-  - Update documentation if needed
-
-- **Issue Resolution**: On-demand basis
-  - Fix parsing issues when they occur
-  - Update selectors when websites change
-  - Troubleshoot n8n workflow problems
-  - No complex monitoring or alerting needed
-
-### Security Considerations
-
-- OAuth2 authentication for Gmail
-- Secure credential storage
-- Rate limiting to prevent abuse
-- Data privacy compliance
 
 ## 📋 Development Roadmap
 
