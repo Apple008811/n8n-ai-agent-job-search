@@ -1,0 +1,18 @@
+# OpenAI API Configuration
+OPENAI_API_KEY=your_openai_api_key_here
+
+# n8n Configuration
+N8N_HOST=localhost
+N8N_PORT=5678
+N8N_PROTOCOL=http
+
+# Database Configuration
+N8N_DATABASE_TYPE=sqlite
+N8N_DATABASE_SQLITE_DATABASE=/home/node/.n8n/database.sqlite
+
+# Vector Database
+VECTOR_DB_PATH=job_vectors.db
+
+# API Services
+AI_ANALYSIS_API_PORT=5002
+LLM_RAG_SERVICE_PORT=5001
