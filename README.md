@@ -1,9 +1,21 @@
-# Job Search AI Agent
+# Intelligent Job Collection AI Agent
 
-An intelligent job collection and automation platform that combines LLM reasoning with n8n workflow automation for seamless job discovery and data management.
+1. Position list 
+An intelligent job collection and automation agent that combines LLM reasoning with n8n workflow automation for seamless job discovery and data management.
+
+## 🎯 Project Objective
+
+**Objective**: Automatically extract job listings from LinkedIn job alerts received via Gmail and synchronize them into a structured Notion database.
+
+**Methods**:
+- **Cursor as Pair Programmer**: Implement manual vibe coding functionality for rapid development and iteration
+- **n8n Workflow Automation**: Integrate all components into a seamless pipeline, enabling twice-daily automated job collection
+
+**Benefits**: Transform chaotic email notifications into a comprehensive positions database, allowing users to focus on the jobs themselves rather than manual data collection. This automation saves 10+ hours of searching, clicking, and organizing work, significantly improving job search efficiency.
 
 ## 📋 Table of Contents
 
+- [🎯 Project Objective](#-project-objective)
 - [✨ Highlights](#-highlights)
 - [🎛️ Quick Start](#️-quick-start)
 - [🏗️ Architecture](#️-architecture)
