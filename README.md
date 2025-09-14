@@ -55,7 +55,8 @@
 - **Job Parsing**: Custom JavaScript parsers (Greenhouse, Stripe, LinkedIn)
 - **Data Processing**: JavaScript/Node.js
 - **API Service**: Flask (Python)
-- **Containerization**: Docker & Docker Compose
+- **Containerization**: Docker & Docker Compose (local execution only)
+- **Infrastructure**: Multi-container orchestration with shared networking
 
 
 ### Core Principles
@@ -75,8 +76,8 @@
 
 | Node | Purpose | Configuration | Key Details |
 |------|---------|---------------|-------------|
-| **Schedule Trigger (Morning)** | Daily morning execution | • Cron: "0 10 * * *" (10:00 AM)<br>• Timezone: Local<br>• Active: True | • Triggers Gmail collection<br>• Captures overnight job alerts<br>• First daily execution |
-| **Schedule Trigger (Evening)** | Daily evening execution | • Cron: "0 20 * * *" (8:00 PM)<br>• Timezone: Local<br>• Active: True | • Triggers Gmail collection<br>• Captures afternoon job alerts<br>• Second daily execution |
+| **Schedule Trigger (Morning)** | Daily morning execution | • Cron: "0 10 * * *" (10:00 AM)<br>• Timezone: Local<br>• Active: True | • Triggers Gmail collection<br>• Captures overnight job alerts<br>• First daily execution<br>• **Requires computer to be powered on** |
+| **Schedule Trigger (Evening)** | Daily evening execution | • Cron: "0 20 * * *" (8:00 PM)<br>• Timezone: Local<br>• Active: True | • Triggers Gmail collection<br>• Captures afternoon job alerts<br>• Second daily execution<br>• **Requires computer to be powered on** |
 | **Gmail (Get Many)** | Retrieve email list | • Resource: Message<br>• Operation: Get Many<br>• Limit: 20<br>• Search: "newer_than:1d"<br>• Sender: "jobalerts-noreply@linkedin.com" | • AND relationship for filters<br>• Daily latest emails only<br>• Strict LinkedIn filtering<br>• Output: Email metadata array |
 | **Code (Time Converter)** | Convert timestamps | • Mode: Run Once for All Items<br>• Language: JavaScript<br>• Input: Email array with Unix timestamps | • **Critical for deduplication**: internalDate as unique identifier<br>• **Essential for testing**: Human-readable time format<br>• **Dual format**: Preserves original + adds readable format<br>• **Timezone handling**: Converts to America/New_York |
 | **Loop** | Iterate through emails | • Input: Email array from Time Converter<br>• Mode: Run Once for Each Item<br>• Batch Size: 1 | • **Required for individual processing**: Gmail (Get) needs single email ID<br>• **Enables full content retrieval**: Each email processed separately<br>• **Prevents API overload**: Sequential processing vs batch |
@@ -235,8 +236,8 @@ For individual users, the time investment is minimal and practical:
 
 | 📄 File | 🎯 Purpose | 📝 Description |
 |---------|------------|----------------|
-| `Dockerfile` | Container configuration | Builds Python API service container |
-| `docker-compose.yml` | Service orchestration | Orchestrates n8n and API service containers |
+| `Dockerfile` | Container configuration | Builds Python API service container with Flask |
+| `docker-compose.yml` | Service orchestration | Multi-service setup: n8n, API, and LLM RAG services |
 | `workflows/` | n8n workflow templates | Sample workflows for different use cases |
 
 ### ⚙️ Configuration & Documentation
@@ -362,6 +363,8 @@ For individual users, the time investment is minimal and practical:
 4. **Access API service**
    - 🔌 API available at http://localhost:5002
    - ❤️ Health check: http://localhost:5002/health
+
+> ⚠️ **Important**: Docker containers run locally and require your computer to be powered on. The automated job collection (scheduled at 10:00 AM and 8:00 PM daily) will only execute when your computer is running and the containers are active. If your computer is shut down or in sleep mode, the scheduled tasks will not trigger.
 
 ### 🔧 Manual Setup (Alternative)
 
