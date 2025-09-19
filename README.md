@@ -14,12 +14,27 @@
 ### System Overview
 
 ```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Data Sources  │    │   n8n Workflow  │    │   Notion DB     │
+┌─────────────────────────────────────────────────────────────────┐
+│                    Job Collection System Architecture            │
+└─────────────────────────────────────────────────────────────────┘
+
+🔄 Method 1: Gmail Email Parsing (For Closed Platforms)
+code┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Gmail Alerts  │───▶│   n8n Workflow  │───▶│   Notion DB    
 │                 │    │                 │    │                 │
-│ • Gmail Alerts  │───▶│ • Gmail Nodes   │───▶│ • Job List      │
-│ • Greenhouse    │    │ • Code Parsers  │    │ • Deduplication │
-│ • Custom Boards │    │ • Notion Nodes  │    │ • Search        │
+│ • LinkedIn      │    │ • Gmail Nodes   │    │ • Job List      │
+│ • Indeed        │    │ • Email Parser  │    │ • Deduplication │
+│ • Glassdoor     │    │ • Notion Nodes  │    │ • Search        │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+
+🌐 Method 2: Direct Web Scraping (For Open Platforms)
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Direct Sites  │───▶│   n8n Workflow  │───▶│   Notion DB     │
+│                 │    │                 │    │                 │
+│ • Apple Jobs    │    │ • HTTP Request  │    │ • Job List      │
+│ • Google Careers│    │ • Universal     │    │ • Deduplication │
+│ • Greenhouse    │    │   Parser        │    │ • Search        │
+│ • Workday       │    │ • Notion Nodes  │    │                 │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
                                 │
                                 ▼
@@ -39,6 +54,10 @@
 - **📧 Gmail Integration**: Automated LinkedIn job alert processing
 - **📝 Notion Integration**: Unified job database with intelligent deduplication
 - **🔄 n8n Automation**: Reliable workflow orchestration and scheduling
+- **🌐 Universal Parser**: Supports Apple, Google, Microsoft, Amazon, Meta, Netflix, Stripe
+- **🔧 Platform Parsers**: Greenhouse, Workday, Lever, BambooHR, SmartRecruiters
+- **📧 Email Parsers**: LinkedIn, Indeed, Glassdoor job alerts
+- **Deduplication**: Intelligent conflict resolution with existing jobs
 
 **🔄 Phase 2, In Development**:
 - **🧠 LLM Reasoning**: AI-powered content analysis and job matching 
@@ -52,7 +71,7 @@
 - **Database**: Notion
 - **AI Integration**: Cursor AI (Pro)
 - **Email Processing**: Gmail API
-- **Job Parsing**: Custom JavaScript parsers (Greenhouse, Stripe, LinkedIn)
+- **Job Parsing**: Universal JavaScript parsers (Apple, Google, Microsoft, Amazon, Meta, Netflix, Stripe, Greenhouse, Workday, Lever, BambooHR, SmartRecruiters, LinkedIn, Indeed, Glassdoor)
 - **Data Processing**: JavaScript/Node.js
 - **API Service**: Flask (Python)
 - **Containerization**: Docker & Docker Compose (local execution only)
@@ -65,6 +84,19 @@
 - **Unified Data Format**: All data sources output the same structure
 - **Configuration-Driven**: Easy to add new data sources through configuration
 - **Backward Compatible**: New features don't affect existing functionality
+
+### n8n Code Node Limitations
+
+**Sandbox Environment**: n8n Code nodes run in a sandboxed environment with the following restrictions:
+- **No Global State**: Cannot access global variables or maintain state across executions
+- **No Persistence**: Each execution is isolated and cannot remember previous data
+- **Limited Scope**: Cannot access system resources, files, or external APIs directly
+- **Cross-Execution Deduplication**: Cannot implement true global deduplication across multiple workflow runs
+
+**Impact on Job Collection**: 
+- Deduplication only works within a single workflow execution
+- Each workflow run starts with a clean state
+- For persistent deduplication, consider alternative tools like Airbyte or custom scripts
 
 
 
@@ -218,11 +250,14 @@ For individual users, the time investment is minimal and practical:
 
 | 📄 File | 🎯 Purpose | 🔗 Usage in n8n |
 |---------|------------|-----------------|
+| `universal_company_parser.js` | **Universal parser** | **Code node** - automatically detects and parses any company/platform |
+| `apple_parser.js` | Apple job parser | **Code node** - extracts jobs from Apple career pages |
 | `greenhouse_optimized.js` | Greenhouse job parser | **Code Parser node** - extracts jobs from Greenhouse job boards |
-| `notion_job_mapper.js` | Notion integration | **Code node** - maps job data to Notion database schema |
-| `universal_job_parser.js` | Universal parser | **Code node** - handles multiple job board formats |
 | `stripe_parser.js` | Stripe job parser | **Code node** - extracts jobs from Stripe custom job board |
-| `test_greenhouse_optimized.js` | Test suite | **Test node** - validates Greenhouse parser functionality |
+| `notion_job_mapper.js` | Notion integration | **Code node** - maps job data to Notion database schema |
+| `test_apple_parser.js` | Apple test suite | **Test node** - validates Apple parser functionality |
+| `test_apple_integration.js` | Integration tests | **Test node** - end-to-end testing for Apple parser |
+| `apple_job_filter_example.js` | Filter examples | **Code node** - job filtering and search examples |
 
 ### 🐍 API Service Files
 
@@ -239,6 +274,7 @@ For individual users, the time investment is minimal and practical:
 | `Dockerfile` | Container configuration | Builds Python API service container with Flask |
 | `docker-compose.yml` | Service orchestration | Multi-service setup: n8n, API, and LLM RAG services |
 | `workflows/` | n8n workflow templates | Sample workflows for different use cases |
+| `workflows/apple_job_collector.json` | Apple job collector | **n8n workflow** - automated Apple job collection |
 
 ### ⚙️ Configuration & Documentation
 

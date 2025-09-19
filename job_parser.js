@@ -3,6 +3,10 @@
 const items = $input.all();
 const results = [];
 
+// Global deduplication - track jobs across all emails
+// Use a simple approach that works within the current execution
+const globalJobTracker = new Set();
+
 for (const item of items) {
   const emailId = item.json.id;
   const emailSubject = item.json.snippet;
@@ -17,7 +21,7 @@ for (const item of items) {
     const date = new Date(parseInt(emailInternalDate));
     emailReadableDate = date.toLocaleString();
     emailTime = date.toLocaleString('en-US', {
-      timeZone: 'America/New_York',
+      timeZone: 'America/Los_Angeles',
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -83,7 +87,18 @@ for (const item of items) {
       const title = jobMatch[2].replace(/<[^>]*>/g, '').trim();
 
       if (title && link && !foundJobs.has(link)) {
+        // Create unique job identifier for global deduplication
+        const jobIdentifier = `${title.toLowerCase().trim()}_${link}`;
+        
+        // Check if this job already exists across all emails
+        if (globalJobTracker.has(jobIdentifier)) {
+          console.log(`Skipping duplicate job: ${title} (${link})`);
+          continue;
+        }
+        
+        // Add to both local and global trackers
         foundJobs.add(link);
+        globalJobTracker.add(jobIdentifier);
         
         // Extract work type from context
         let workType = 'Unknown';
@@ -123,7 +138,18 @@ for (const item of items) {
         const title = jobMatch[2].replace(/<[^>]*>/g, '').trim();
 
         if (title && link && !foundJobs.has(link)) {
+          // Create unique job identifier for global deduplication
+          const jobIdentifier = `${title.toLowerCase().trim()}_${link}`;
+          
+          // Check if this job already exists across all emails
+          if (globalJobTracker.has(jobIdentifier)) {
+            console.log(`Skipping duplicate job: ${title} (${link})`);
+            continue;
+          }
+          
+          // Add to both local and global trackers
           foundJobs.add(link);
+          globalJobTracker.add(jobIdentifier);
           jobDetails.push({
             jobTitle: title,
             jobLink: link,
@@ -141,7 +167,19 @@ for (const item of items) {
         const link = jobMatch[2];
 
         if (title && link && !foundJobs.has(link)) {
+          // Create unique job identifier for global deduplication
+          const jobIdentifier = `${title.toLowerCase().trim()}_${link}`;
+          
+          // Check if this job already exists across all emails
+          if (globalJobTracker.has(jobIdentifier)) {
+            console.log(`Skipping duplicate job: ${title} (${link})`);
+            continue;
+          }
+          
+          // Add to both local and global trackers
           foundJobs.add(link);
+          globalJobTracker.add(jobIdentifier);
+          
           jobDetails.push({
             jobTitle: title,
             jobLink: link,
@@ -189,6 +227,9 @@ for (const item of items) {
     });
   }
 }
+
+// Log deduplication summary
+console.log(`Deduplication Summary: Found ${globalJobTracker.size} unique jobs across ${items.length} emails`);
 
 // Wrap results in json format for n8n
 return results.map(result => ({ json: result }));
