@@ -14,7 +14,7 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 ### The Plan is:
 - ✅ **Automated Email Filtering**: Auto-identify LinkedIn job alerts
 - ✅ **Batch Processing**: Process all job notifications at once
-- ✅ **Smart Parsing**: Auto-extract <span style="color: blue;">**personalized**</span> job information
+- ✅ **Smart Parsing**: Auto-extract **`personalized`** job information
 - ✅ **Unified Storage**: Sync to Notion database
 - ✅ **Deduplication**: Avoid duplicate job entries
 
