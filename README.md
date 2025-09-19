@@ -72,7 +72,7 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 
 ### How to Build Each Node (with Cursor AI Prompts)
 
-**Cursor Prompt**: 
+**🤖 Cursor Prompt**: 
 > "Set up a timer that automatically runs twice a day (10 AM and 8 PM) to check for new LinkedIn job emails"
 
 #### 1. **Schedule Trigger Node**
@@ -84,7 +84,7 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 - Set Timezone: America/Los_Angeles
 - Enable the trigger
 
-**Cursor Prompt**:
+**🤖 Cursor Prompt**:
 > "Connect to Gmail and get all the latest LinkedIn job alert emails from the past day."
 
 #### 2. **Gmail (Get Many) Node**
@@ -96,9 +96,17 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 - Set Operation: Get Many
 - Set Limit: 20
 - Add Filter: `from:jobalerts-noreply@linkedin.com newer_than:1d`
-- Configure Gmail OAuth2 credentials
+- Configure Gmail OAuth2 credentials:
+  1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+  2. Create a new project or select existing one
+  3. Enable Gmail API: [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
+  4. Go to [Credentials](https://console.cloud.google.com/apis/credentials)
+  5. Create OAuth 2.0 Client ID
+  6. Set authorized redirect URI: `http://localhost:5678/rest/oauth2-credential/callback`
+  7. Copy Client ID and Client Secret to n8n credentials
 
-**Cursor Prompt**:
+
+**🤖 Cursor Prompt**:
 > "I can't understand the time format you're giving me, I need to maintain the order of emails by local time when they were received"
 
 #### 3. **Code (Time Converter) Node (learning by doing)**
@@ -112,8 +120,8 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 - Ensure timezone: America/Los_Angeles
 
 
-**Cursor Prompt**:
-> "Read each of my emails one by one, extract every job position into separate rows, get the job title, link, and the local time when I received the email"
+**🤖 Cursor Prompt**:
+> "Read each of my emails one by one, extract every job position into separate rows, get the job titles, links, and the local time when I received the emails"
 
 #### 4. **Loop Node**
 **Purpose**: Process each email individually
@@ -153,7 +161,7 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 - Copy code from `job_parser.js`
 - Includes deduplication and timezone support
 
-**Cursor Prompt**:
+**🤖 Cursor Prompt**:
 > "Give me the job list with the information to Notion database - job title, company, link, and work type (remote/hybrid/onsite), now the database is ready, please sync the information in."
 
 #### 8. **Notion Node**
@@ -169,22 +177,9 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
   - Onsite/Remote/Hybrid: `={{ $json.workType }}`
 - Configure Notion credentials
 
-**✅ Phase 1, Implemented**:
-- **🤖 Job Collection Agent**: Fully operational LinkedIn job extraction from Gmail
-- **📧 Gmail Integration**: Automated LinkedIn job alert processing
-- **📝 Notion Integration**: Unified job database with intelligent deduplication
-- **🔄 n8n Automation**: Reliable workflow orchestration and scheduling
-- **🌐 Universal Parser**: Supports Apple, Google, Microsoft, Amazon, Meta, Netflix, Stripe
-- **🔧 Platform Parsers**: Greenhouse, Workday, Lever, BambooHR, SmartRecruiters
-- **📧 Email Parsers**: LinkedIn, Indeed, Glassdoor job alerts
-- **Deduplication**: Intelligent conflict resolution with existing jobs
-
-**🔄 Phase 2, In Development**:
-- **🧠 LLM Reasoning**: AI-powered content analysis and job matching 
-- **💬 Chat Interface**: Interactive job search assistant with RAG capabilities
-- **📄 Resume Parser**: AI-powered resume customization and analysis
 
 
+# Appendix
 ### Core Principles
 
 - **Modular Design**: Each agent is independent and can be maintained separately
@@ -200,89 +195,9 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 - **Limited Scope**: Cannot access system resources, files, or external APIs directly
 - **Cross-Execution Deduplication**: Cannot implement true global deduplication across multiple workflow runs
 
-**Impact on Job Collection**: 
-- Deduplication only works within a single workflow execution
-- Each workflow run starts with a clean state
-- For persistent deduplication, consider alternative tools like Airbyte or custom scripts
-- Configure Gmail OAuth2 credentials
 
-#### 3. **Code (Time Converter) Node**
-**Purpose**: Convert email timestamps to readable format
-**Cursor Prompt**:
-> "I can't understand the time format you're giving me, I need to maintain the order of emails by local time when they were received"
-
-**Setup Steps**:
-- Add "Code" node
-- Set Mode: Run Once for All Items
-- Set Language: JavaScript
-- Copy code from `time_converter.js`
-- Ensure timezone: America/Los_Angeles
-
-#### 4. **Loop Node**
-**Purpose**: Process each email individually
-**Cursor Prompt**:
-> "I want you to read each email one by one, not all at once"
-
-**Setup Steps**:
-- Add "Loop Over Items" node
-- Set Mode: Run Once for Each Item
-- Set Batch Size: 1
-- Connect from Time Converter output
-
-#### 5. **Gmail (Get) Node**
-**Purpose**: Get full content of each email
-**Cursor Prompt**:
-> "Get the full content of each email so we can read the job information inside"
-
-**Setup Steps**:
-- Add "Gmail" node inside loop
-- Set Resource: Message
-- Set Operation: Get
-- Set Message ID: `={{ $json.id }}`
-- Set Format: Full
-- Use same Gmail credentials
-
-#### 6. **Add EmailTime Node**
-**Purpose**: Preserve email metadata through the loop
-**Cursor Prompt**:
-> "Read each of my emails one by one, extract every job position into separate rows, get the job title, link, and the local time when I received the email"
-
-**Setup Steps**:
-- Add "Code" node after Gmail (Get)
-- Set Mode: Run Once for Each Item
-- Copy code from `add_readable_date.js`
-- Preserve email metadata
-
-#### 7. **Code Parser Node**
-**Purpose**: Extract job information from email HTML
-**Cursor Prompt**:
-> "Read each of my emails one by one, extract every job position into separate rows, get the job title, link, and the local time when I received the email"
-
-**Setup Steps**:
-- Add "Code" node
-- Set Mode: Run Once for Each Item
-- Set Language: JavaScript
-- Copy code from `job_parser.js`
-- Includes deduplication and timezone support
-
-#### 8. **Notion Node**
-**Purpose**: Store job data in Notion database
-**Cursor Prompt**:
-> "Save all the job information to Notion database - job title, company, link, and work type (remote/hybrid/onsite)"
-
-**Setup Steps**:
-- Add "Notion" node
-- Set Operation: Create
-- Set Database: Your Job Search database
-- Map fields:
-  - Job Title: `={{ $json.jobTitle }}`
-  - Link: `={{ $json.jobLink }}`
-  - Onsite/Remote/Hybrid: `={{ $json.workType }}`
-- Configure Notion credentials
 
 ## 🔧 Configuration
-
-### Gmail Integration
 
 #### Workflow Node Configuration
 
@@ -327,28 +242,6 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
    - In integration settings, go to "Access" tab
    - Add database to "Manually selected" permissions
    - Ensure integration has access to the database
-
-### Greenhouse Job Parser
-
-#### Supported Job Board Types
-
-The parser automatically detects and handles different job board formats:
-
-- **Standard Greenhouse**: `boards.greenhouse.io/company`
-- **Custom Greenhouse**: Company-specific implementations
-- **LinkedIn Jobs**: For deduplication purposes
-- **Generic Fallback**: For unknown formats
-
-#### Database Schema Mapping
-
-| Greenhouse Field | Notion Field | Type | Description |
-|------------------|--------------|------|-------------|
-| `title` | Job Title | Title | Job position title |
-| `url` | Link | URL | Complete application URL |
-| `location` | Onsite/Remote/Hybrid | Text | Work location |
-| `company` | - | - | Company name (used for deduplication) |
-| `department` | - | - | Department (used for filtering) |
-| `type` | - | - | Employment type (used for filtering) |
 
 
 
@@ -414,7 +307,7 @@ For individual users, the time investment is minimal and practical:
 
 
 
-## 📁 Project Structure
+## 📁 Cursor Project Structure
 
 ### 🔧 Core n8n Workflow Files
 
@@ -465,86 +358,6 @@ For individual users, the time investment is minimal and practical:
 | `LICENSE` | MIT License | Open source license |
 
 
-## 🎛️ Build up in Cursor
-
-### Prompts
-
-#### 1) Connect Cursor (AI Agent) to this repo
-- "Open the repository in Cursor and act as my Pair Programmer. Goal: build an LLM-powered job collection agent using n8n, Gmail API, and Notion. Keep code in English, minimal UI, and document steps in README."
-- "Scan the codebase and summarize the workflow from Gmail → Parser → Notion. Identify integration points for a chat/RAG layer."
-- "Generate a minimal Flask endpoint for `/chat` that accepts a question and returns a placeholder response. Add unit tests if trivial."
-
-#### 2) n8n workflow bootstrapping
-- "Create an n8n workflow: Webhook (POST /chat) → HTTP Request to my Flask `/chat` → Respond to Webhook. Return JSON { response, relevant_jobs, timestamp }."
-- "Create a second webhook (POST /add-job) that forwards job JSON to my `/add_job` endpoint."
-- "Export the workflow as JSON and save it under `workflows/llm_rag_chat.json`."
-
-#### 3) Gmail API integration prompts
-- "Guide me to create Gmail OAuth2 credentials. Output the exact steps and where to paste Client ID/Secret in n8n."
-- "In n8n, configure Gmail (Get Many) to filter: sender `jobalerts-noreply@linkedin.com`, search `newer_than:1d`, limit 20."
-- "Add a Code node using `time_converter.js`, then Loop → Gmail (Get) full message → Code `job_parser.js` → Notion. Ensure `emailTime` survives."
-
-#### 4) Notion integration prompts
-- "Walk me through creating a Notion integration and database. Fields: Job Title (Title), Link (URL), Onsite/Remote/Hybrid (Select/Rich Text)."
-- "Map n8n Notion node properties exactly: Title = `={{ $json.jobTitle }}`, Link = `={{ $json.jobLink }}`, Work Type = `={{ $json.workType }}`."
-- "Test with 3 sample items and verify entries appear in Notion without property errors."
-
-#### 5) LLM + RAG chat layer (Phase 2)
-- "Add `OPENAI_API_KEY` to env. Start the `llm_rag_service.py` on port 5001."
-- "POST /add_job with a sample job. Then POST /chat with: 'Find remote data roles in SF Bay Area'. Confirm recommendations include the added job if relevant."
-- "Serve `chat_interface.html` locally and test a full chat round-trip via n8n webhook."
-
-
-## 🤖 AI Agents
-
-### Phase 1: Job Collection Automation ✅ **IMPLEMENTED**
-
-**Purpose**: Automatically collect job postings from multiple sources and store them in a unified Notion database.
-
-**Implemented Features**:
-- ✅ **Gmail Integration**: Successfully configured and tested
-- ✅ **LinkedIn Job Alerts**: Automated extraction from Gmail (87 job entries processed)
-- ✅ **Notion Integration**: Database connection and property mapping completed
-- ✅ **End-to-End Workflow**: Complete automation pipeline operational
-- ✅ **Greenhouse Parser**: Universal parser with smart deduplication
-- ✅ **Custom Job Boards**: Stripe and other company-specific parsers
-- ✅ **Deduplication**: Intelligent conflict resolution with existing jobs
-
-**Data Sources**:
-- **Gmail (LinkedIn Job Alerts)**: Primary source for job notifications ✅
-- **Greenhouse**: Universal job board parser ✅
-- **Custom Job Boards**: Stripe and other company-specific pages ✅
-- **Manual Input**: User-added job opportunities ✅
-
-### Phase 2: LLM Reasoning & Intelligence 🔄 **IN DEVELOPMENT**
-
-**Purpose**: Add AI-powered reasoning, analysis, and intelligent job matching capabilities.
-
-**Planned Features**:
-- 🔄 **LLM Reasoning**: AI analysis of job requirements and candidate matching
-- 🔄 **Intelligent Job Recommendations**: AI-powered job suggestions based on skills
-- 🔄 **Resume Customization**: AI analysis and resume tailoring for specific jobs
-- 🔄 **Chat Interface**: Interactive job search assistant with RAG capabilities
-- 🔄 **Skills Matching**: Automatic skills extraction and job matching
-
-**Current Status**: LLM reasoning layer is under development but not yet implemented.
-
-### Phase 3: Advanced Features 📋 **PLANNED**
-
-**Purpose**: Advanced career development and research automation.
-
-**Planned Capabilities**:
-- 📋 **Research Agent**: Academic and professional research automation
-- 📋 **Company Intelligence**: Auto-fetch company information and insights
-- 📋 **Application Tracking**: Track application status and follow-up reminders
-- 📋 **Salary Analysis**: Market data and compensation insights
-
-### Cancelled Features ❌ **NOT IMPLEMENTING**
-
-**Events Integration**: Originally planned to integrate tech events and conferences, but due to API limitations and membership requirements, this feature has been cancelled for now.
-
-
-
 ## 🚀 Setup Instructions
 
 ### 📋 Prerequisites
@@ -554,11 +367,6 @@ For individual users, the time investment is minimal and practical:
 - ✅ Notion API access
 - ✅ Cursor Pro subscription
 
-**Demo Talking Points**:
-- "Automated job collection from LinkedIn emails"
-- "Intelligent deduplication across multiple emails"
-- "Real-time synchronization to Notion database"
-- "Pacific Time zone support for local users"
 
 ### 🐳 Quick Start with Docker
 
@@ -582,336 +390,6 @@ For individual users, the time investment is minimal and practical:
    - ❤️ Health check: http://localhost:5002/health
 
 > ⚠️ **Important**: Docker containers run locally and require your computer to be powered on. The automated job collection (scheduled at 10:00 AM and 8:00 PM daily) will only execute when your computer is running and the containers are active. If your computer is shut down or in sleep mode, the scheduled tasks will not trigger.
-
-### 🔧 Manual Setup (Alternative)
-
-1. **Install n8n locally**
-   ```bash
-   npm install n8n -g
-   n8n start
-   ```
-
-2. **Set up Python API service**
-   ```bash
-   pip install -r requirements.txt
-   python app.py
-   ```
-
-3. **Configure API credentials**
-   - 📧 Gmail OAuth2 credentials
-   - 📝 Notion integration token
-   - 💾 Update `config_backup.md` with your settings
-
-### ⚙️ n8n Workflow Configuration
-
-1. **Import workflow templates**
-   - 📄 Use `workflows/` directory as reference
-   - 🆕 Create new workflow for Job Search Agent
-
-2. **Configure Code nodes**
-   - 📋 Copy content from respective `.js` files
-   - 🔄 Set node modes (Run Once for All Items vs Each Item)
-
-3. **Set up API connections**
-   - 📧 Gmail API (OAuth2)
-   - 📝 Notion API (Token)
-   - 🌐 HTTP Request nodes for external APIs
-
-## 📖 Usage Guide
-
-### Daily Job Search
-
-1. **Automated Collection**: Gmail automatically collects LinkedIn job alerts
-2. **Smart Parsing**: System parses job information using AI
-3. **Data Storage**: Jobs stored in Notion database with deduplication
-4. **User Review**: User reviews and applies to relevant positions
-
-### Greenhouse Job Parser
-
-#### Basic Usage
-
-```javascript
-const { parseGreenhouseJobs, searchGreenhouseJobs } = require('./greenhouse_optimized.js');
-
-// Parse jobs from Greenhouse HTML
-const jobs = parseGreenhouseJobs(html, 'Company Name');
-
-// Search for specific jobs
-const engineerJobs = searchGreenhouseJobs(jobs, { title: 'Engineer' });
-const remoteJobs = searchGreenhouseJobs(jobs, { location: 'Remote' });
-```
-
-#### Notion Integration
-
-```javascript
-const { parseAndMapToNotion } = require('./notion_job_mapper.js');
-
-// Parse and map to Notion format (with deduplication)
-const notionPages = parseAndMapToNotion(html, 'Company Name', existingLinkedInJobs);
-```
-
-### Resume Customization
-
-1. **Upload**: Upload resume and job description
-2. **AI Analysis**: AI analyzes requirements and matches skills
-3. **Generate**: Generate customized resume
-4. **Export**: Export optimized version
-
-## 📋 Standard Operating Procedure
-
-### Overview
-
-This SOP outlines the complete process for developing new job collection agents, from initial prompts to production deployment.
-
-### Phase 1: Planning & Requirements
-
-#### 1.1 Initial Prompt
-Start with a clear, specific prompt that defines the scope and requirements:
-
-```
-"Create a [JOB_BOARD_TYPE] job parser that:
-- Extracts job titles, locations, departments, and application URLs
-- Integrates with existing Notion Job List database
-- Prevents duplicates with existing LinkedIn jobs
-- Supports advanced filtering and search
-- Follows the established code patterns in this repository"
-```
-
-#### 1.2 Requirements Analysis
-- **Data Source**: Identify the job board URL and structure
-- **Data Fields**: Map required fields to Notion schema
-- **Integration Points**: Define how it connects to existing systems
-- **Deduplication**: Specify conflict resolution with existing data
-- **Performance**: Set parsing speed and accuracy targets
-
-#### 1.3 Create TODO List
-Use the todo_write tool to track progress:
-
-```javascript
-todo_write({
-  merge: false,
-  todos: [
-    { id: 'analyze_source', content: 'Analyze job board HTML structure and data format', status: 'in_progress' },
-    { id: 'create_parser', content: 'Create specialized parser for the job board', status: 'pending' },
-    { id: 'notion_mapping', content: 'Map parser output to Notion database schema', status: 'pending' },
-    { id: 'deduplication', content: 'Implement duplicate detection against existing jobs', status: 'pending' },
-    { id: 'testing', content: 'Create comprehensive test suite', status: 'pending' },
-    { id: 'n8n_integration', content: 'Create n8n workflow for automation', status: 'pending' },
-    { id: 'documentation', content: 'Update README with usage instructions', status: 'pending' }
-  ]
-});
-```
-
-### Phase 2: Code Development
-
-#### 2.1 Parser Development
-Create the core parsing logic:
-
-```javascript
-// File: [job_board]_parser.js
-// 1. Analyze HTML structure
-// 2. Implement multiple parsing methods (JSON, HTML, fallback)
-// 3. Extract job data with error handling
-// 4. Add comprehensive logging
-// 5. Follow English-only code and comments rule
-```
-
-#### 2.2 Notion Integration
-Create mapping functions:
-
-```javascript
-// File: notion_[job_board]_mapper.js
-// 1. Map parser output to Notion schema
-// 2. Implement deduplication logic
-// 3. Handle data validation and cleaning
-// 4. Add export functionality for manual import
-```
-
-#### 2.3 Testing Suite
-Create comprehensive tests:
-
-```javascript
-// File: test_[job_board]_parser.js
-// 1. Unit tests for parsing functions
-// 2. Integration tests with Notion mapping
-// 3. Deduplication tests with existing data
-// 4. Error handling and edge case tests
-// 5. Performance benchmarks
-```
-
-### Phase 3: n8n Configuration
-
-#### 3.1 Workflow Design
-Create the n8n workflow structure:
-
-```json
-{
-  "name": "[Job Board] Job Collector",
-  "nodes": [
-    {
-      "name": "Cron Trigger",
-      "type": "n8n-nodes-base.cron",
-      "parameters": {
-        "rule": {
-          "interval": [{"field": "cronExpression", "expression": "0 9 * * *"}]
-        }
-      }
-    },
-    {
-      "name": "HTTP Request",
-      "type": "n8n-nodes-base.httpRequest",
-      "parameters": {
-        "url": "https://[job-board-url]",
-        "method": "GET"
-      }
-    },
-    {
-      "name": "Code - Parse Jobs",
-      "type": "n8n-nodes-base.code",
-      "parameters": {
-        "jsCode": "const { parseJobs } = require('./[parser-file]');\nconst jobs = parseJobs($input.first().json.html, 'Company Name');\nreturn jobs.map(job => ({ json: job }));"
-      }
-    },
-    {
-      "name": "Notion - Create Page",
-      "type": "n8n-nodes-base.notion",
-      "parameters": {
-        "operation": "create",
-        "databaseId": "your-database-id",
-        "properties": {
-          "Job Title": "={{ $json.title }}",
-          "Link": "={{ $json.url }}",
-          "Onsite/Remote/Hybrid": "={{ $json.location }}"
-        }
-      }
-    }
-  ]
-}
-```
-
-### Phase 4: Testing & Validation
-
-#### 4.1 Unit Testing
-Run individual component tests:
-
-```bash
-# Test parser functionality
-node test_[job_board]_parser.js
-
-# Test Notion integration
-node test_notion_[job_board]_mapper.js
-
-# Test deduplication
-node test_deduplication.js
-```
-
-#### 4.2 Integration Testing
-Test complete workflow:
-
-```bash
-# Test n8n workflow
-n8n execute --workflow workflows/[job_board]_collector.json
-
-# Test with real data
-n8n execute --workflow workflows/[job_board]_test.json
-```
-
-### Phase 5: Documentation & Deployment
-
-#### 5.1 Update README
-Add comprehensive documentation with:
-- Overview and features
-- Installation instructions
-- Usage examples
-- Configuration options
-- Testing instructions
-- Troubleshooting guide
-
-#### 5.2 Create Examples
-Provide practical examples:
-- Complete working examples
-- Real-world usage scenarios
-- Best practices demonstration
-
-### Phase 6: Maintenance & Monitoring
-
-#### 6.1 Monitoring Setup
-- Set up logging for parsing success/failure rates
-- Monitor Notion API usage and limits
-- Track duplicate detection accuracy
-- Monitor n8n workflow execution
-
-#### 6.2 Regular Maintenance
-- Weekly: Review parsing accuracy
-- Monthly: Update parser for site changes
-- Quarterly: Performance optimization
-- As needed: Bug fixes and improvements
-
-### Best Practices
-
-#### Code Quality
-- **English Only**: All code, comments, and documentation in English
-- **Error Handling**: Comprehensive error handling and logging
-- **Testing**: Unit tests for all functions
-- **Documentation**: Clear, comprehensive documentation
-- **Performance**: Optimize for speed and memory usage
-
-#### Integration
-- **Modularity**: Keep components independent and reusable
-- **Configuration**: Use configuration files for easy updates
-- **Validation**: Validate all data before processing
-- **Deduplication**: Always check for duplicates
-- **Security**: Follow security best practices
-
-
-## 📋 Development Roadmap
-
-### Phase 2: LLM Reasoning & Intelligence 🔄 **CURRENT FOCUS**
-- [ ] **LLM Reasoning Engine** - Implement AI-powered job analysis and candidate matching
-- [ ] **Chat Interface** - Interactive job search assistant with RAG capabilities
-- [ ] **Resume Parser** - AI-powered resume customization and analysis
-- [ ] **Skills Matching** - Automatic skills extraction and job matching
-- [ ] **Job Recommendations** - AI-powered job suggestions based on profile
-
-### Phase 3: Advanced Features 📋 **PLANNED**
-- [ ] **Research Agent** - Academic and professional research automation
-- [ ] **Company Intelligence** - Auto-fetch company information from Glassdoor/Crunchbase
-- [ ] **Application Tracking** - Track application status and follow-up reminders
-- [ ] **Salary Analysis** - Market data and compensation insights
-- [ ] **Career Progression** - Long-term career development analytics
-
-### Phase 4: Platform Expansion 🚀 **FUTURE**
-- [ ] **Multi-platform Support** - Add Indeed, AngelList, GitHub Jobs, Stack Overflow Jobs
-- [ ] **Advanced Filtering** - Filter jobs by keywords, location, salary range, company size
-- [ ] **Machine Learning** - Learn from user preferences and application history
-- [ ] **Automated Applications** - One-click application for compatible job boards
-- [ ] **Interview Integration** - Calendar integration for interview management
-
-### Improvements & Maintenance 🔧 **ONGOING**
-- [ ] **Work Type Parsing** - Improve detection logic (currently extracting "Unknown")
-- [ ] **Repository Rename** - Consider renaming from `job-search` to `job-collection-platform`
-- [ ] **Performance Optimization** - Enhance parsing speed and accuracy
-- [ ] **Error Handling** - Improve robustness and error recovery
-
-### Cancelled Features ❌ **NOT IMPLEMENTING**
-- **Events Integration** - Originally planned to integrate tech events and conferences, but due to API limitations and membership requirements, this feature has been cancelled for now
-
-## 📋 Table of Contents
-
-- [🎛️ Quick Start](#️-quick-start)
-- [🏗️ Architecture](#️-architecture)
-- [🤖 AI Agents](#-ai-agents)
-- [🔧 Technical Stack](#-technical-stack)
-- [📁 Project Structure](#-project-structure)
-- [🚀 Setup Instructions](#-setup-instructions)
-- [📖 Usage Guide](#-usage-guide)
-- [📋 Standard Operating Procedure](#-standard-operating-procedure)
-- [🔧 Configuration](#-configuration)
-- [📊 Performance & Monitoring](#-performance--monitoring)
-- [📋 Development Roadmap](#-development-roadmap)
-- [🤝 Contributing](#-contributing)
-- [📄 License](#-license)
-
 
 
 ## 🤝 Contributing
