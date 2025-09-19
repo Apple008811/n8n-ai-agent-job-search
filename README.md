@@ -174,8 +174,8 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 # Wrap up: Standard Process
 - Be crystal clear on what we want
 - Build or use? Is any existing product already? 
-- How much money, time, efforts we want to invest?
-- Build, prompt (back and forth) to finetune, test
+- If build by ourselves, how much money, time, efforts we want to invest?
+- Prompt (back and forth) to finetune, test
 - Use (publish, share)
 
 
