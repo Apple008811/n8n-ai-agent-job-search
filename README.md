@@ -1,19 +1,20 @@
 # Intelligent Job List Collection AI Agent
 
-## The Objective: Put LinkedIn Job Alerts positions into a manageable Notion Database
+## The Objective
+Transform LinkedIn Job Alerts into a Structured Notion Database
 
-## The Issues:
+### The Issues
 - Email Overwhelm
 - Manual email filtering on LinkedIn job alerts
 - One-by-one email opening to check job details  
-- Repetitive daily work, repetitive positions
+- Repetitive daily work, repetitive job positions
 - Manual input into Notion database
-- Approximately spend 1 hour each day only on sorting
+- Approximately spend 1 hour each day ( ~46 days / year), only on sorting, searching, clicking, and organizing those roles
 
-**Into This**:
+### The Plan is:
 - ✅ **Automated Email Filtering**: Auto-identify LinkedIn job alerts
 - ✅ **Batch Processing**: Process all job notifications at once
-- ✅ **Smart Parsing**: Auto-extract job information
+- ✅ **Smart Parsing**: Auto-extract <span style="color: blue;">**personalized**</span> job information
 - ✅ **Unified Storage**: Sync to Notion database
 - ✅ **Deduplication**: Avoid duplicate job entries
 
