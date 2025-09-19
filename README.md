@@ -33,22 +33,16 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 
 ## 🔧 Technical Stack - Your Favorite Tools
 
-### Core Workflow & Infrastructure
-- **Workflow Engine**: n8n
-- **Containerization**: Docker & Docker Compose (local execution only, Multi-container orchestration with shared networking)
+| Category | Tool | Purpose | Details |
+|----------|------|---------|---------|
+| **Workflow** | n8n | Workflow Engine | Visual automation platform |
+| **Infrastructure** | Docker & Docker Compose | Containerization | Local execution, multi-container orchestration |
+| **Database** | Notion | Data Storage | Unified job database |
+| **Email** | Gmail API | Email Processing | LinkedIn job alerts retrieval |
+| **AI** | Cursor (Pro) | AI Integration | $20/mo + GitHub sync |
+| **Code** | JavaScript/Node.js | Code Processing | Job parsing and data processing |
+| **API** | Flask (Python) | API Service | Backend services |
 
-### Data & Storage
-- **Database**: Notion
-- **Email Processing**: Gmail API
-
-### AI & Development
-- **AI Integration**: Cursor (Pro, $20/mo) + sync to GitHub
-- **Code Processing**: JavaScript/Node.js
-- **API Service**: Flask (Python)
-
-
-### Job Parsing
-- **Universal Parsers**: JavaScript parsers for Apple, Google, Microsoft, Amazon, Meta, Netflix, Stripe, Greenhouse, Workday, Lever, BambooHR, SmartRecruiters, LinkedIn, Indeed, Glassdoor
 
 ### System Overview
 
