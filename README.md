@@ -18,7 +18,29 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 - ✅ **Unified Storage**: Sync to Notion database
 - ✅ **Deduplication**: Avoid duplicate job entries
 
-**Result**: Transform chaotic email notifications into a comprehensive job database, allowing you to focus on the jobs themselves rather than manual data collection. This automation saves 10+ hours of searching, clicking, and organizing work, significantly improving job search efficiency.
+
+### Workflow Design
+
+| Aspect | Details |
+|--------|---------|
+| **Data Source** | Gmail API (LinkedIn job alerts) - limitations: indirect access vs direct LinkedIn API |
+| **Format** | By-position list with links, automated sync + manual input capability |
+| **Frequency** | Twice daily execution |
+| **Volume** | Max hundreds < 1,000 entries (Notion free membership limit) |
+| **Cost** | As low as possible - free tier optimization |
+
+
+
+## 🔧 Technical Stack - Your Favorite Tools
+- **Workflow Engine**: n8n
+- **Database**: Notion
+- **AI Integration**: Cursor AI (Pro)
+- **Email Processing**: Gmail API
+- **Job Parsing**: Universal JavaScript parsers (Apple, Google, Microsoft, Amazon, Meta, Netflix, Stripe, Greenhouse, Workday, Lever, BambooHR, SmartRecruiters, LinkedIn, Indeed, Glassdoor)
+- **Data Processing**: JavaScript/Node.js
+- **API Service**: Flask (Python)
+- **Containerization**: Docker & Docker Compose (local execution only)
+- **Infrastructure**: Multi-container orchestration with shared networking
 
 ### System Overview
 
@@ -72,19 +94,6 @@ code┌─────────────────┐    ┌────
 - **🧠 LLM Reasoning**: AI-powered content analysis and job matching 
 - **💬 Chat Interface**: Interactive job search assistant with RAG capabilities
 - **📄 Resume Parser**: AI-powered resume customization and analysis
-
-
-## 🔧 Technical Stack
-
-- **Workflow Engine**: n8n
-- **Database**: Notion
-- **AI Integration**: Cursor AI (Pro)
-- **Email Processing**: Gmail API
-- **Job Parsing**: Universal JavaScript parsers (Apple, Google, Microsoft, Amazon, Meta, Netflix, Stripe, Greenhouse, Workday, Lever, BambooHR, SmartRecruiters, LinkedIn, Indeed, Glassdoor)
-- **Data Processing**: JavaScript/Node.js
-- **API Service**: Flask (Python)
-- **Containerization**: Docker & Docker Compose (local execution only)
-- **Infrastructure**: Multi-container orchestration with shared networking
 
 
 ### Core Principles
