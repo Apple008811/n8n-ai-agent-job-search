@@ -171,6 +171,12 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
   - Onsite/Remote/Hybrid: `={{ $json.workType }}`
 - Configure Notion credentials
 
+# Wrap up: Standard Process
+- Be crystal clear on what we want
+- Build or use? Is any existing product already? 
+- How much money, time, efforts we want to invest?
+- Build, prompt (back and forth) to finetune, test
+- Use, publish, share
 
 
 # Appendix
