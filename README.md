@@ -176,10 +176,96 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 - Build or use? Is any existing product already? 
 - How much money, time, efforts we want to invest?
 - Build, prompt (back and forth) to finetune, test
-- Use, publish, share
+- Use (publish, share)
 
 
 # Appendix
+
+## 📁 Cursor Project Structure
+
+### 🔧 Core n8n Workflow Files
+
+| 📄 File | 🎯 Purpose | 🔗 Usage in n8n |
+|---------|------------|-----------------|
+| `job_parser.js` | Main job parsing logic | **Code Parser node** - extracts job details from LinkedIn emails |
+| `time_converter.js` | Timestamp conversion utility | **Code (Time Converter) node** - converts Unix timestamps to readable format |
+| `debug_gmail_get.js` | Gmail debugging tool | **Debug node** - inspects Gmail (Get) node output structure |
+| `test_current_state.js` | State testing utility | **Test node** - validates current workflow state |
+| `gmail_parser.js` | Legacy email parser | **Backup parser** - early version of email parsing logic |
+
+### 🎯 Job Parser Files
+
+| 📄 File | 🎯 Purpose | 🔗 Usage in n8n |
+|---------|------------|-----------------|
+| `universal_company_parser.js` | **Universal parser** | **Code node** - automatically detects and parses any company/platform |
+| `apple_parser.js` | Apple job parser | **Code node** - extracts jobs from Apple career pages |
+| `greenhouse_optimized.js` | Greenhouse job parser | **Code Parser node** - extracts jobs from Greenhouse job boards |
+| `stripe_parser.js` | Stripe job parser | **Code node** - extracts jobs from Stripe custom job board |
+| `notion_job_mapper.js` | Notion integration | **Code node** - maps job data to Notion database schema |
+| `test_apple_parser.js` | Apple test suite | **Test node** - validates Apple parser functionality |
+| `test_apple_integration.js` | Integration tests | **Test node** - end-to-end testing for Apple parser |
+| `apple_job_filter_example.js` | Filter examples | **Code node** - job filtering and search examples |
+
+### 🐍 API Service Files
+
+| 📄 File | 🎯 Purpose | 📝 Description |
+|---------|------------|----------------|
+| `app.py` | Flask API service | Python web service for content analysis and file processing |
+| `llm_rag_service.py` | LLM RAG service | AI-powered chat and analysis service |
+| `requirements.txt` | Python dependencies | Flask, PyPDF2, BeautifulSoup4, pandas, matplotlib, plotly |
+
+### 🐳 Deployment & Infrastructure
+
+| 📄 File | 🎯 Purpose | 📝 Description |
+|---------|------------|----------------|
+| `Dockerfile` | Container configuration | Builds Python API service container with Flask |
+| `docker-compose.yml` | Service orchestration | Multi-service setup: n8n, API, and LLM RAG services |
+| `workflows/` | n8n workflow templates | Sample workflows for different use cases |
+| `workflows/apple_job_collector.json` | Apple job collector | **n8n workflow** - automated Apple job collection |
+
+### ⚙️ Configuration & Documentation
+
+| 📄 File | 🎯 Purpose | 📝 Description |
+|---------|------------|----------------|
+| `config_backup.md` | Configuration backup | Contains all API credentials and settings (⚠️ **NOT in Git**) |
+| `README.md` | Project documentation | Complete setup and usage guide |
+| `LICENSE` | MIT License | Open source license |
+
+
+## 🚀 Setup Instructions
+
+### 📋 Prerequisites
+
+- ✅ Docker and Docker Compose
+- ✅ Gmail API credentials
+- ✅ Notion API access
+- ✅ Cursor Pro subscription
+
+
+### 🐳 Quick Start with Docker
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Apple008811/n8n-ai-agent-job-search.git
+   cd n8n-ai-agent-job-search
+   ```
+
+2. **Start services with Docker Compose**
+   ```bash
+   docker-compose up -d
+   ```
+
+3. **Access n8n interface**
+   - 🌐 Open http://localhost:5678
+   - ⚙️ Complete n8n setup wizard
+
+4. **Access API service**
+   - 🔌 API available at http://localhost:5002
+   - ❤️ Health check: http://localhost:5002/health
+
+> ⚠️ **Important**: Docker containers run locally and require your computer to be powered on. The automated job collection (scheduled at 10:00 AM and 8:00 PM daily) will only execute when your computer is running and the containers are active. If your computer is shut down or in sleep mode, the scheduled tasks will not trigger.
+
+
 ### Core Principles
 
 - **Modular Design**: Each agent is independent and can be maintained separately
@@ -305,91 +391,6 @@ For individual users, the time investment is minimal and practical:
 - Rate limiting to prevent abuse
 - Data privacy compliance
 
-
-
-## 📁 Cursor Project Structure
-
-### 🔧 Core n8n Workflow Files
-
-| 📄 File | 🎯 Purpose | 🔗 Usage in n8n |
-|---------|------------|-----------------|
-| `job_parser.js` | Main job parsing logic | **Code Parser node** - extracts job details from LinkedIn emails |
-| `time_converter.js` | Timestamp conversion utility | **Code (Time Converter) node** - converts Unix timestamps to readable format |
-| `debug_gmail_get.js` | Gmail debugging tool | **Debug node** - inspects Gmail (Get) node output structure |
-| `test_current_state.js` | State testing utility | **Test node** - validates current workflow state |
-| `gmail_parser.js` | Legacy email parser | **Backup parser** - early version of email parsing logic |
-
-### 🎯 Job Parser Files
-
-| 📄 File | 🎯 Purpose | 🔗 Usage in n8n |
-|---------|------------|-----------------|
-| `universal_company_parser.js` | **Universal parser** | **Code node** - automatically detects and parses any company/platform |
-| `apple_parser.js` | Apple job parser | **Code node** - extracts jobs from Apple career pages |
-| `greenhouse_optimized.js` | Greenhouse job parser | **Code Parser node** - extracts jobs from Greenhouse job boards |
-| `stripe_parser.js` | Stripe job parser | **Code node** - extracts jobs from Stripe custom job board |
-| `notion_job_mapper.js` | Notion integration | **Code node** - maps job data to Notion database schema |
-| `test_apple_parser.js` | Apple test suite | **Test node** - validates Apple parser functionality |
-| `test_apple_integration.js` | Integration tests | **Test node** - end-to-end testing for Apple parser |
-| `apple_job_filter_example.js` | Filter examples | **Code node** - job filtering and search examples |
-
-### 🐍 API Service Files
-
-| 📄 File | 🎯 Purpose | 📝 Description |
-|---------|------------|----------------|
-| `app.py` | Flask API service | Python web service for content analysis and file processing |
-| `llm_rag_service.py` | LLM RAG service | AI-powered chat and analysis service |
-| `requirements.txt` | Python dependencies | Flask, PyPDF2, BeautifulSoup4, pandas, matplotlib, plotly |
-
-### 🐳 Deployment & Infrastructure
-
-| 📄 File | 🎯 Purpose | 📝 Description |
-|---------|------------|----------------|
-| `Dockerfile` | Container configuration | Builds Python API service container with Flask |
-| `docker-compose.yml` | Service orchestration | Multi-service setup: n8n, API, and LLM RAG services |
-| `workflows/` | n8n workflow templates | Sample workflows for different use cases |
-| `workflows/apple_job_collector.json` | Apple job collector | **n8n workflow** - automated Apple job collection |
-
-### ⚙️ Configuration & Documentation
-
-| 📄 File | 🎯 Purpose | 📝 Description |
-|---------|------------|----------------|
-| `config_backup.md` | Configuration backup | Contains all API credentials and settings (⚠️ **NOT in Git**) |
-| `README.md` | Project documentation | Complete setup and usage guide |
-| `LICENSE` | MIT License | Open source license |
-
-
-## 🚀 Setup Instructions
-
-### 📋 Prerequisites
-
-- ✅ Docker and Docker Compose
-- ✅ Gmail API credentials
-- ✅ Notion API access
-- ✅ Cursor Pro subscription
-
-
-### 🐳 Quick Start with Docker
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Apple008811/n8n-ai-agent-job-search.git
-   cd n8n-ai-agent-job-search
-   ```
-
-2. **Start services with Docker Compose**
-   ```bash
-   docker-compose up -d
-   ```
-
-3. **Access n8n interface**
-   - 🌐 Open http://localhost:5678
-   - ⚙️ Complete n8n setup wizard
-
-4. **Access API service**
-   - 🔌 API available at http://localhost:5002
-   - ❤️ Health check: http://localhost:5002/health
-
-> ⚠️ **Important**: Docker containers run locally and require your computer to be powered on. The automated job collection (scheduled at 10:00 AM and 8:00 PM daily) will only execute when your computer is running and the containers are active. If your computer is shut down or in sleep mode, the scheduled tasks will not trigger.
 
 
 ## 🤝 Contributing
