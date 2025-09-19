@@ -25,22 +25,30 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 |--------|---------|
 | **Data Source** | Gmail API (LinkedIn job alerts) - limitations: indirect access vs direct LinkedIn API |
 | **Format** | By-position list with links, automated sync + manual input capability |
-| **Frequency** | Twice daily execution |
+| **Frequency** | Twice daily execution + (hopefully) temporarily use |
 | **Volume** | Max hundreds < 1,000 entries (Notion free membership limit) |
 | **Cost** | As low as possible - free tier optimization |
 
 
 
 ## 🔧 Technical Stack - Your Favorite Tools
+
+### Core Workflow & Infrastructure
 - **Workflow Engine**: n8n
+- **Containerization**: Docker & Docker Compose (local execution only, Multi-container orchestration with shared networking)
+
+### Data & Storage
 - **Database**: Notion
-- **AI Integration**: Cursor AI (Pro)
 - **Email Processing**: Gmail API
-- **Job Parsing**: Universal JavaScript parsers (Apple, Google, Microsoft, Amazon, Meta, Netflix, Stripe, Greenhouse, Workday, Lever, BambooHR, SmartRecruiters, LinkedIn, Indeed, Glassdoor)
-- **Data Processing**: JavaScript/Node.js
+
+### AI & Development
+- **AI Integration**: Cursor (Pro, $20/mo) + sync to GitHub
+- **Code Processing**: JavaScript/Node.js
 - **API Service**: Flask (Python)
-- **Containerization**: Docker & Docker Compose (local execution only)
-- **Infrastructure**: Multi-container orchestration with shared networking
+
+
+### Job Parsing
+- **Universal Parsers**: JavaScript parsers for Apple, Google, Microsoft, Amazon, Meta, Netflix, Stripe, Greenhouse, Workday, Lever, BambooHR, SmartRecruiters, LinkedIn, Indeed, Glassdoor
 
 ### System Overview
 
@@ -49,34 +57,16 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 │                    Job Collection System Architecture            │
 └─────────────────────────────────────────────────────────────────┘
 
-🔄 Method 1: Gmail Email Parsing (For Closed Platforms)
-code┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Gmail Alerts  │───▶│   n8n Workflow  │───▶│   Notion DB    
+🔄 Gmail Email Parsing (For Closed Platforms)
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Gmail Alerts  │───▶│   n8n Workflow  │───▶│   Notion DB     │
 │                 │    │                 │    │                 │
 │ • LinkedIn      │    │ • Gmail Nodes   │    │ • Job List      │
-│ • Indeed        │    │ • Email Parser  │    │ • Deduplication │
-│ • Glassdoor     │    │ • Notion Nodes  │    │ • Search        │
+│                 │    │ • Email Parser  │    │ • Deduplication │
+│                 │    │ • Notion Nodes  │    │ • Search        │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 
-🌐 Method 2: Direct Web Scraping (For Open Platforms)
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Direct Sites  │───▶│   n8n Workflow  │───▶│   Notion DB     │
-│                 │    │                 │    │                 │
-│ • Apple Jobs    │    │ • HTTP Request  │    │ • Job List      │
-│ • Google Careers│    │ • Universal     │    │ • Deduplication │
-│ • Greenhouse    │    │   Parser        │    │ • Search        │
-│ • Workday       │    │ • Notion Nodes  │    │                 │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-                                │
-                                ▼
-                       ┌─────────────────┐
-                       │   AI Services   │
-                       │                 │
-                       │ • LLM Analysis  │
-                       │ • RAG Chat      │
-                       │ • Resume Parser │
-                       └─────────────────┘
-```
+
 
 ### Progresses
 
