@@ -172,11 +172,17 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 - Configure Notion credentials
 
 # Wrap up: Standard Process
-- Be crystal clear on what we want
-- Build or use? Is any existing product already? 
-- If build by ourselves, how much money, time, efforts we want to invest?
-- Prompt (back and forth) to finetune, test
-- Use (publish, share)
+
+```mermaid
+flowchart TD
+    A[🎯 Be crystal clear on what we want] --> B{🔍 Build or use?<br/>Is any existing product already?}
+    B -->|✅ Use existing| C[Use existing solution]
+    B -->|🛠️ Build ourselves| D{💰 How much money, time,<br/>efforts we want to invest?}
+    D --> E[Build custom solution]
+    E --> F[🔄 Prompt back and forth<br/>to finetune, test]
+    F --> G[🚀 Use, publish, share]
+    C --> G
+```
 
 
 # Appendix
