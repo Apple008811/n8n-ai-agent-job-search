@@ -1,15 +1,34 @@
 # Intelligent Job Collection AI Agent
 
 
-## 🎯 Project Objective
+## 😫 The Problem: Email Overwhelm
 
-**Objective**: Automatically extract job listings from LinkedIn job alerts received via Gmail and synchronize them into a structured Notion database.
+**Current Pain Points**:
+- **Email Inbox Overwhelmed**: Hundreds of emails daily, hard to manage
+- **Manual LinkedIn Job Filtering**: Need to manually identify LinkedIn job alert emails
+- **One-by-One Email Review**: Open each email individually to check job details
+- **Repetitive Manual Work**: Same filtering process every day
+- **Low Efficiency**: Get tired after just 2 rounds of manual work, don't want to continue
 
-**Methods**:
-- **Cursor as Pair Programmer**: Implement manual vibe coding functionality for rapid development and iteration
-- **n8n Workflow Automation**: Integrate all components into a seamless pipeline, enabling twice-daily automated job collection
+**The Frustration**: 
+> "My inbox is flooded with emails. I have to manually find LinkedIn job alerts, then open each email one by one to see the job details. After doing this twice, I'm already exhausted and don't want to continue."
 
-**Benefits**: Transform chaotic email notifications into a comprehensive positions database, allowing users to focus on the jobs themselves rather than manual data collection. This automation saves 10+ hours of searching, clicking, and organizing work, significantly improving job search efficiency.
+## 🎯 The Solution: Automated Job Collection
+
+**Transform This**:
+- ❌ Manual email filtering
+- ❌ One-by-one email opening  
+- ❌ Repetitive daily work
+- ❌ Exhausting manual process
+
+**Into This**:
+- ✅ **Automated Email Filtering**: Auto-identify LinkedIn job alerts
+- ✅ **Batch Processing**: Process all job notifications at once
+- ✅ **Smart Parsing**: Auto-extract job information
+- ✅ **Unified Storage**: Sync to Notion database
+- ✅ **Deduplication**: Avoid duplicate job entries
+
+**Result**: Transform chaotic email notifications into a comprehensive job database, allowing you to focus on the jobs themselves rather than manual data collection. This automation saves 10+ hours of searching, clicking, and organizing work, significantly improving job search efficiency.
 
 ### System Overview
 
@@ -99,6 +118,108 @@ code┌─────────────────┐    ┌────
 - For persistent deduplication, consider alternative tools like Airbyte or custom scripts
 
 
+
+## 🛠️ Step-by-Step Node Setup Guide
+
+### How to Build Each Node (with Cursor AI Prompts)
+
+#### 1. **Schedule Trigger Node**
+**Purpose**: Automatically run the workflow twice daily
+**Cursor Prompt**: 
+> "Create a schedule trigger in n8n that runs twice daily at 10:00 AM and 8:00 PM Pacific Time to collect LinkedIn job alerts from Gmail"
+
+**Setup Steps**:
+- Add "Schedule Trigger" node
+- Set Cron: `0 10 * * *` (10:00 AM) and `0 20 * * *` (8:00 PM)
+- Set Timezone: America/Los_Angeles
+- Enable the trigger
+
+#### 2. **Gmail (Get Many) Node**
+**Purpose**: Retrieve list of LinkedIn job alert emails
+**Cursor Prompt**:
+> "Configure Gmail node to get many messages with filters: sender 'jobalerts-noreply@linkedin.com', search 'newer_than:1d', limit 20 messages"
+
+**Setup Steps**:
+- Add "Gmail" node
+- Set Resource: Message
+- Set Operation: Get Many
+- Set Limit: 20
+- Add Filter: `from:jobalerts-noreply@linkedin.com newer_than:1d`
+- Configure Gmail OAuth2 credentials
+
+#### 3. **Code (Time Converter) Node**
+**Purpose**: Convert Unix timestamps to readable format
+**Cursor Prompt**:
+> "Create a JavaScript code node that converts Unix timestamps from Gmail to readable Pacific Time format, preserving original timestamp for deduplication"
+
+**Setup Steps**:
+- Add "Code" node
+- Set Mode: Run Once for All Items
+- Set Language: JavaScript
+- Copy code from `time_converter.js`
+- Ensure timezone: America/Los_Angeles
+
+#### 4. **Loop Node**
+**Purpose**: Process each email individually
+**Cursor Prompt**:
+> "Add a loop node to iterate through each email from the time converter, processing one email at a time for individual Gmail retrieval"
+
+**Setup Steps**:
+- Add "Loop Over Items" node
+- Set Mode: Run Once for Each Item
+- Set Batch Size: 1
+- Connect from Time Converter output
+
+#### 5. **Gmail (Get) Node**
+**Purpose**: Get full content of each email
+**Cursor Prompt**:
+> "Configure Gmail node to get full message content using the message ID from the loop, retrieving complete HTML for job parsing"
+
+**Setup Steps**:
+- Add "Gmail" node inside loop
+- Set Resource: Message
+- Set Operation: Get
+- Set Message ID: `={{ $json.id }}`
+- Set Format: Full
+- Use same Gmail credentials
+
+#### 6. **Add EmailTime Node**
+**Purpose**: Preserve email metadata through the loop
+**Cursor Prompt**:
+> "Create a code node that adds email time metadata to each email content, ensuring readableDate and emailTime survive the Gmail (Get) operation"
+
+**Setup Steps**:
+- Add "Code" node after Gmail (Get)
+- Set Mode: Run Once for Each Item
+- Copy code from `add_readable_date.js`
+- Preserve email metadata
+
+#### 7. **Code Parser Node**
+**Purpose**: Extract job information from email HTML
+**Cursor Prompt**:
+> "Create a JavaScript parser that extracts job titles, links, and work types from LinkedIn email HTML, with cross-email deduplication logic"
+
+**Setup Steps**:
+- Add "Code" node
+- Set Mode: Run Once for Each Item
+- Set Language: JavaScript
+- Copy code from `job_parser.js`
+- Includes deduplication and timezone support
+
+#### 8. **Notion Node**
+**Purpose**: Store job data in Notion database
+**Cursor Prompt**:
+> "Configure Notion node to create database pages with job data, mapping jobTitle to Title field, jobLink to Link field, and workType to Onsite/Remote/Hybrid field"
+
+**Setup Steps**:
+- Add "Notion" node
+- Set Operation: Create
+- Set Database: Your Job Search database
+- Map fields:
+  - Job Title: `={{ $json.jobTitle }}`
+  - Link: `={{ $json.jobLink }}`
+  - Onsite/Remote/Hybrid: `={{ $json.workType }}`
+- Configure Notion credentials
 
 ## 🔧 Configuration
 
