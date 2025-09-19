@@ -62,7 +62,7 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 │   Gmail Alerts  │───▶│   n8n Workflow  │───▶│   Notion DB     │
 │                 │    │                 │    │                 │
 │ • LinkedIn      │    │ • Gmail Nodes   │    │ • Job List      │
-│                 │    │ • Email Parser  │    │ • Deduplication│
+│                 │    │ • Email Parser  │    │ • Deduplication │
 │                 │    │ • Notion Nodes  │    │ • Search        │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 
