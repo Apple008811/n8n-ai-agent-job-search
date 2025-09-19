@@ -67,16 +67,16 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
-### Processes and Prompts
 
-## 🛠️ Step-by-Step Node Setup Guide
+## 🛠️ Processes and Prompts: Step-by-Step Node Setup Guide
 
 ### How to Build Each Node (with Cursor AI Prompts)
 
+**Cursor Prompt**: 
+> "Set up a timer that automatically runs twice a day (10 AM and 8 PM) to check for new LinkedIn job emails"
+
 #### 1. **Schedule Trigger Node**
 **Purpose**: Automatically run the workflow twice daily
-**Cursor Prompt**: 
-> "Create a schedule trigger in n8n that runs twice daily at 10:00 AM and 8:00 PM Pacific Time to collect LinkedIn job alerts from Gmail"
 
 **Setup Steps**:
 - Add "Schedule Trigger" node
@@ -84,10 +84,11 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 - Set Timezone: America/Los_Angeles
 - Enable the trigger
 
+**Cursor Prompt**:
+> "Connect to Gmail and get all the latest LinkedIn job alert emails from the past day."
+
 #### 2. **Gmail (Get Many) Node**
 **Purpose**: Retrieve list of LinkedIn job alert emails
-**Cursor Prompt**:
-> "Configure Gmail node to get many messages with filters: sender 'jobalerts-noreply@linkedin.com', search 'newer_than:1d', limit 20 messages"
 
 **Setup Steps**:
 - Add "Gmail" node
@@ -97,10 +98,11 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 - Add Filter: `from:jobalerts-noreply@linkedin.com newer_than:1d`
 - Configure Gmail OAuth2 credentials
 
-#### 3. **Code (Time Converter) Node**
-**Purpose**: Convert Unix timestamps to readable format
 **Cursor Prompt**:
-> "Create a JavaScript code node that converts Unix timestamps from Gmail to readable Pacific Time format, preserving original timestamp for deduplication"
+> "I can't understand the time format you're giving me, I need to maintain the order of emails by local time when they were received"
+
+#### 3. **Code (Time Converter) Node (learning by doing)**
+**Purpose**: Convert Unix timestamps to readable format
 
 **Setup Steps**:
 - Add "Code" node
@@ -109,11 +111,12 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 - Copy code from `time_converter.js`
 - Ensure timezone: America/Los_Angeles
 
+
+**Cursor Prompt**:
+> "Read each of my emails one by one, extract every job position into separate rows, get the job title, link, and the local time when I received the email"
+
 #### 4. **Loop Node**
 **Purpose**: Process each email individually
-**Cursor Prompt**:
-> "Add a loop node to iterate through each email from the time converter, processing one email at a time for individual Gmail retrieval"
-
 **Setup Steps**:
 - Add "Loop Over Items" node
 - Set Mode: Run Once for Each Item
@@ -122,8 +125,6 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 
 #### 5. **Gmail (Get) Node**
 **Purpose**: Get full content of each email
-**Cursor Prompt**:
-> "Configure Gmail node to get full message content using the message ID from the loop, retrieving complete HTML for job parsing"
 
 **Setup Steps**:
 - Add "Gmail" node inside loop
@@ -135,8 +136,6 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 
 #### 6. **Add EmailTime Node**
 **Purpose**: Preserve email metadata through the loop
-**Cursor Prompt**:
-> "Create a code node that adds email time metadata to each email content, ensuring readableDate and emailTime survive the Gmail (Get) operation"
 
 **Setup Steps**:
 - Add "Code" node after Gmail (Get)
@@ -146,8 +145,6 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 
 #### 7. **Code Parser Node**
 **Purpose**: Extract job information from email HTML
-**Cursor Prompt**:
-> "Create a JavaScript parser that extracts job titles, links, and work types from LinkedIn email HTML, with cross-email deduplication logic"
 
 **Setup Steps**:
 - Add "Code" node
@@ -156,10 +153,11 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 - Copy code from `job_parser.js`
 - Includes deduplication and timezone support
 
+**Cursor Prompt**:
+> "Give me the job list with the information to Notion database - job title, company, link, and work type (remote/hybrid/onsite), now the database is ready, please sync the information in."
+
 #### 8. **Notion Node**
 **Purpose**: Store job data in Notion database
-**Cursor Prompt**:
-> "Configure Notion node to create database pages with job data, mapping jobTitle to Title field, jobLink to Link field, and workType to Onsite/Remote/Hybrid field"
 
 **Setup Steps**:
 - Add "Notion" node
@@ -170,12 +168,6 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
   - Link: `={{ $json.jobLink }}`
   - Onsite/Remote/Hybrid: `={{ $json.workType }}`
 - Configure Notion credentials
-
-
-
-
-
-
 
 **✅ Phase 1, Implemented**:
 - **🤖 Job Collection Agent**: Fully operational LinkedIn job extraction from Gmail
@@ -215,9 +207,9 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 - Configure Gmail OAuth2 credentials
 
 #### 3. **Code (Time Converter) Node**
-**Purpose**: Convert Unix timestamps to readable format
+**Purpose**: Convert email timestamps to readable format
 **Cursor Prompt**:
-> "Create a JavaScript code node that converts Unix timestamps from Gmail to readable Pacific Time format, preserving original timestamp for deduplication"
+> "I can't understand the time format you're giving me, I need to maintain the order of emails by local time when they were received"
 
 **Setup Steps**:
 - Add "Code" node
@@ -229,7 +221,7 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 #### 4. **Loop Node**
 **Purpose**: Process each email individually
 **Cursor Prompt**:
-> "Add a loop node to iterate through each email from the time converter, processing one email at a time for individual Gmail retrieval"
+> "I want you to read each email one by one, not all at once"
 
 **Setup Steps**:
 - Add "Loop Over Items" node
@@ -240,7 +232,7 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 #### 5. **Gmail (Get) Node**
 **Purpose**: Get full content of each email
 **Cursor Prompt**:
-> "Configure Gmail node to get full message content using the message ID from the loop, retrieving complete HTML for job parsing"
+> "Get the full content of each email so we can read the job information inside"
 
 **Setup Steps**:
 - Add "Gmail" node inside loop
@@ -253,7 +245,7 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 #### 6. **Add EmailTime Node**
 **Purpose**: Preserve email metadata through the loop
 **Cursor Prompt**:
-> "Create a code node that adds email time metadata to each email content, ensuring readableDate and emailTime survive the Gmail (Get) operation"
+> "Read each of my emails one by one, extract every job position into separate rows, get the job title, link, and the local time when I received the email"
 
 **Setup Steps**:
 - Add "Code" node after Gmail (Get)
@@ -264,7 +256,7 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 #### 7. **Code Parser Node**
 **Purpose**: Extract job information from email HTML
 **Cursor Prompt**:
-> "Create a JavaScript parser that extracts job titles, links, and work types from LinkedIn email HTML, with cross-email deduplication logic"
+> "Read each of my emails one by one, extract every job position into separate rows, get the job title, link, and the local time when I received the email"
 
 **Setup Steps**:
 - Add "Code" node
@@ -276,7 +268,7 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 #### 8. **Notion Node**
 **Purpose**: Store job data in Notion database
 **Cursor Prompt**:
-> "Configure Notion node to create database pages with job data, mapping jobTitle to Title field, jobLink to Link field, and workType to Onsite/Remote/Hybrid field"
+> "Save all the job information to Notion database - job title, company, link, and work type (remote/hybrid/onsite)"
 
 **Setup Steps**:
 - Add "Notion" node
