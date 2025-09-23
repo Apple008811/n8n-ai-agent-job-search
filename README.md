@@ -25,7 +25,7 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 |--------|---------|
 | **Data Source** | Gmail API (LinkedIn job alerts) - limitations: indirect access vs direct LinkedIn API |
 | **Format** | By-position list with links, automated sync + manual input capability |
-| **Frequency** | Twice daily execution + (hopefully) temporarily use |
+| **Frequency** | Twice daily execution + temporarily use |
 | **Volume** | Max hundreds < 1,000 entries (Notion free membership limit) |
 | **Cost** | As low as possible - free tier optimization |
 
@@ -79,7 +79,7 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 - Enable the trigger
 
 **🤖 Cursor Prompt**:
-> "Connect to Gmail and get all the latest LinkedIn job alert emails from the past day."
+> "Connect to Gmail and get the latest LinkedIn job alert emails."
 
 #### 2. **Gmail (Get Many) Node**
 **Purpose**: Retrieve list of LinkedIn job alert emails
@@ -89,7 +89,7 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 - Set Resource: Message
 - Set Operation: Get Many
 - Set Limit: 20
-- Add Filter: `from:jobalerts-noreply@linkedin.com newer_than:1d`
+- Add Filter: `from:jobalerts-noreply@linkedin.com`
 - Configure Gmail OAuth2 credentials:
   1. Go to [Google Cloud Console](https://console.cloud.google.com/)
   2. Create a new project or select existing one
@@ -115,7 +115,7 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 
 
 **🤖 Cursor Prompt**:
-> "Read each of my emails one by one, extract every job position into separate rows, get the job titles, links, and the local time when I received the emails"
+> "Read each of my emails one by one, extract every job position into separate rows, get the job titles, links, work type and the local time when I received the emails"
 
 #### 4. **Loop Node**
 **Purpose**: Process each email individually
@@ -171,7 +171,7 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
   - Onsite/Remote/Hybrid: `={{ $json.workType }}`
 - Configure Notion credentials
 
-# Wrap up: Standard Process
+# Wrap up into SOP:
 
 ```mermaid
 flowchart TD
@@ -180,7 +180,7 @@ flowchart TD
     B -->|🛠️ Build ourselves| D{💰 How much money, time,<br/>efforts we want to invest?}
     D --> E[Build custom solution]
     E --> F[🔄 Prompt back and forth<br/>to finetune, test]
-    F --> G[🚀 Use, publish, share]
+    F --> G[🚀 Use / publish / share]
     C --> G
 ```
 
