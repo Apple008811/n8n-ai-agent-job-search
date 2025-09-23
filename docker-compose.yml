@@ -50,7 +50,7 @@ services:
 volumes:
   n8n_persistent_data:
     driver: local
-
 networks:
   ai-network:
     driver: bridge
+
