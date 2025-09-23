@@ -41,7 +41,7 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 | **Email** | Gmail API | Email Processing | LinkedIn job alerts retrieval |
 | **AI** | Cursor (Pro) | AI Integration | $20/mo + GitHub sync |
 | **Code** | JavaScript/Node.js | Code Processing | Job parsing and data processing |
-| **API** | Flask (Python) | API Service | Backend services (暂未使用) |
+
 
 
 ### System Overview
