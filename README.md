@@ -13,31 +13,11 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 - Approximately spend 1 hour each day ( ~46 days / year), only on sorting, searching, clicking, and organizing those roles
 
 
-> **So I prompt to cursor**: *"I want to build an AI agent that automatically reads job alerts from my emails and neatly organizes them into my Notion database. Are there any free tools I can use?"* **→ Yes! I recommend n8n as an excellent workflow automation platform for this exact purpose.**
+**🤖 Cursor Prompt**: 
 
+> *"I want to build an AI agent that automatically reads job alerts from my emails and neatly organizes them into my Notion database. Are there any free tools I can use?"* 
+**→ Yes! I recommend n8n as an excellent workflow automation platform for this exact purpose.**
 
-### Product Design
-
-| Aspect | Details |
-|--------|---------|
-| **Data Source** | Gmail API (LinkedIn job alerts) - limitations: indirect access vs direct LinkedIn API |
-| **Format** | By-position list with links, automated sync + manual input capability |
-| **Frequency** | Twice daily execution + temporarily use |
-| **Volume** | Max hundreds < 1,000 entries (Notion free membership limit) |
-| **Cost** | As low as possible - free tier optimization |
-
-
-
-## 🔧 Technical Stack - Your Favorite Tools
-
-| Category | Tool | Purpose | Details |
-|----------|------|---------|---------|
-| **Workflow** | n8n | Workflow Engine | Visual automation platform |
-| **Infrastructure** | Docker & Docker Compose | Containerization | Local execution, multi-container orchestration |
-| **Database** | Notion | Data Storage | Unified job database |
-| **Email** | Gmail API | Email Processing | LinkedIn job alerts retrieval |
-| **AI** | Cursor (Pro) | AI Integration | $20/mo + GitHub sync |
-| **Code** | JavaScript/Node.js | Code Processing | Job parsing and data processing |
 
 
 
@@ -57,6 +37,19 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 │                 │    │ • Notion Nodes  │    │ • Search        │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
+
+## 🔧 Technical Stack - Your Favorite Tools
+
+| Category | Tool | Purpose | Details |
+|----------|------|---------|---------|
+| **Workflow** | n8n | Workflow Engine | Visual automation platform |
+| **Infrastructure** | Docker & Docker Compose | Containerization | Local execution, multi-container orchestration |
+| **Database** | Notion | Data Storage | Unified job database |
+| **Email** | Gmail API | Email Processing | LinkedIn job alerts retrieval |
+| **AI** | Cursor (Pro) | AI Integration | $20/mo + GitHub sync |
+| **Code** | JavaScript/Node.js | Code Processing | Job parsing and data processing |
+
+
 
 
 ## 🛠️ Processes and Prompts: Step-by-Step Node Setup Guide
@@ -183,6 +176,18 @@ flowchart TD
 
 
 # Appendix
+
+## Product Design
+
+| Aspect | Details |
+|--------|---------|
+| **Data Source** | Gmail API (LinkedIn job alerts) - limitations: indirect access vs direct LinkedIn API |
+| **Format** | By-position list with links, automated sync + manual input capability |
+| **Frequency** | Twice daily execution + temporarily use |
+| **Volume** | Max hundreds < 1,000 entries (Notion free membership limit) |
+| **Cost** | As low as possible - free tier optimization |
+
+
 
 ## 📁 Cursor Project Structure
 
