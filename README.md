@@ -1,5 +1,6 @@
 # Intelligent Job List Collection AI Agent
 
+
 ## The Objective
 Transform LinkedIn Job Alerts into a Structured Notion Database
 
@@ -11,12 +12,8 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 - Manual input into Notion database
 - Approximately spend 1 hour each day ( ~46 days / year), only on sorting, searching, clicking, and organizing those roles
 
-### The Plan is:
-- ✅ **Automated Email Filtering**: Auto-identify LinkedIn job alerts
-- ✅ **Batch Processing**: Process all job notifications at once
-- ✅ **Smart Parsing**: Auto-extract **personalized** job information
-- ✅ **Unified Storage**: Sync to Notion database
-- ✅ **Deduplication**: Avoid duplicate job entries
+
+> **So I prompt to cursor**: *"I want to build an AI agent that automatically reads job alerts from my emails and neatly organizes them into my Notion database. Are there any free tools I can use?"* **→ Yes! I recommend n8n as an excellent workflow automation platform for this exact purpose.**
 
 
 ### Product Design
