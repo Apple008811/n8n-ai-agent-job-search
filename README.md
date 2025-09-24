@@ -15,7 +15,9 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 
 **🤖 Cursor Prompt**: 
 
-> *"I want to build an AI agent that automatically reads job alerts from my emails and neatly organizes them into my Notion database. Are there any free tools I can use?"* **→ After research, I found n8n is perfect for this - it's a free, visual workflow automation platform that can handle email parsing, data transformation, and database integration seamlessly.**
+> *"I want to build an AI agent that automatically reads job alerts from my emails and neatly organizes them into my Notion database. Are there any free tools I can use?"*
+> 
+> **→ After research, I found n8n is perfect for this - it's a free, visual workflow automation platform that can handle email parsing, data transformation, and database integration seamlessly.**
 
 
 ### System Overview
