@@ -20,6 +20,7 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 > **→ After research, I found n8n is perfect for this - it's a free, visual workflow automation platform that can handle email parsing, data transformation, and database integration seamlessly.**
 
 
+
 ### System Overview
 
 ```
@@ -56,7 +57,9 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 ### How to Build Each Node (with Cursor AI Prompts)
 
 **🤖 Cursor Prompt**: 
-> "Set up a timer that automatically runs twice a day (10 AM and 8 PM) to check for new LinkedIn job emails"
+> "Where should I start?"
+
+**→ Set up a timer that automatically runs twice a day (10 AM and 8 PM) to check for new LinkedIn job emails"
 
 #### 1. **Schedule Trigger Node**
 **Purpose**: Automatically run the workflow twice daily
@@ -68,7 +71,7 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 - Enable the trigger
 
 **🤖 Cursor Prompt**:
-> "Connect to Gmail and get the latest LinkedIn job alert emails."
+> "I want this agent to read through these alert emails and add all the latest job lists for me"
 
 #### 2. **Gmail (Get Many) Node**
 **Purpose**: Retrieve list of LinkedIn job alert emails
@@ -104,7 +107,7 @@ Transform LinkedIn Job Alerts into a Structured Notion Database
 
 
 **🤖 Cursor Prompt**:
-> "Read each of my emails one by one, extract every job position into separate rows, get the job titles, links, work type and the local time when I received the emails"
+> "Read each of my emails one by one, extract every job position into separate rows, get the job titles, links, work type and the local time when I received the emails - the other details I'll add manually later"
 
 #### 4. **Loop Node**
 **Purpose**: Process each email individually
